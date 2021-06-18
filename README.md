@@ -1,4 +1,4 @@
-<p align="center"><img src="https://github.com/ramzan/Atmostate/blob/main/fastlane/metadata/android/en-US/images/icon.png?raw=true" width="150"></p> 
+<p align="center"><img src="https://github.com/ramzan/Atmostate/blob/master/fastlane/metadata/android/en-US/images/icon.png?raw=true" width="150"></p> 
 <h2 align="center"><b>Atmostate</b></h2>
 <h4 align="center">A weather app written with Jetpack Compose using OpenWeatherMap</h4>
 <p align="center">
