@@ -6,7 +6,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Query
 
-interface WeatherService {
+interface WeatherApiService {
     @GET("onecall")
     suspend fun getForecast(
         @Query("lat") lat: Double,
@@ -16,13 +16,13 @@ interface WeatherService {
 }
 
 
-object WeatherRepository {
-    private val retrofit: WeatherService by lazy {
+object WeatherApi {
+    private val retrofit: WeatherApiService by lazy {
         Retrofit.Builder()
             .baseUrl("https://api.openweathermap.org/data/2.5/")
             .addConverterFactory(MoshiConverterFactory.create())
             .build()
-            .create(WeatherService::class.java)
+            .create(WeatherApiService::class.java)
     }
 
     suspend fun getForecast(lat: Double, lon: Double): WeatherResult {
