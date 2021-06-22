@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -21,19 +21,27 @@ import ca.ramzan.atmostate.ui.theme.AtmostateTheme
 import ca.ramzan.atmostate.ui.theme.Orange100
 import ca.ramzan.atmostate.ui.theme.Orange500
 
+val tabTitles = listOf("Current", "Hourly", "Daily")
+
 @Composable
 fun AtmostateApp(vm: MainViewModel = viewModel()) {
     val state = vm.state.collectAsState()
+    val (tabIndex, setTabIndex) = rememberSaveable { mutableStateOf(0) }
     AtmostateTheme {
         Scaffold(
-            topBar = { MainAppBar() },
+            topBar = { MainAppBar(tabIndex, setTabIndex) },
             drawerContent = { Text(text = "drawerContent") },
             content = {
                 when (val s = state.value) {
                     is MainState.Error -> CenteredItem {
                         Text(text = s.error, textAlign = TextAlign.Center)
                     }
-                    is MainState.Loaded -> CurrentForecast(data = s.data)
+                    is MainState.Loaded -> when (tabIndex) {
+                        0 -> CurrentForecast(s.data.current, s.data.minutely)
+                        1 -> HourlyForecast(hourly = s.data.hourly)
+                        2 -> DailyForecast(daily = s.data.daily)
+                        else -> throw Exception("Illegal tab index: $tabIndex")
+                    }
                     is MainState.Loading -> CenteredItem { CircularProgressIndicator() }
                 }
             },
@@ -43,16 +51,25 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
 }
 
 @Composable
-fun MainAppBar() {
-    TopAppBar(
-        title = { Text("TopAppBar") },
-        backgroundColor = Orange500,
-        navigationIcon = {
-            IconButton(onClick = {}) {
-                Icon(Icons.Filled.Menu, contentDescription = "Menu")
+fun MainAppBar(tabIndex: Int, onTabSelected: (Int) -> Unit) {
+    Column {
+        TopAppBar(
+            title = { Text("TopAppBar") },
+            backgroundColor = Orange500,
+            navigationIcon = {
+                IconButton(onClick = {}) {
+                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                }
+            }
+        )
+        TabRow(selectedTabIndex = tabIndex) {
+            tabTitles.mapIndexed { idx, title ->
+                Tab(selected = false, onClick = { onTabSelected(idx) }) {
+                    Text(title)
+                }
             }
         }
-    )
+    }
 }
 
 @Composable

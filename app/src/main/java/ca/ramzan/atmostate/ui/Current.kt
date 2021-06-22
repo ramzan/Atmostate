@@ -2,7 +2,6 @@ package ca.ramzan.atmostate.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,29 +11,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ca.ramzan.atmostate.network.WeatherResult
+import ca.ramzan.atmostate.network.Current
+import ca.ramzan.atmostate.network.Minutely
 import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
-fun CurrentForecast(data: WeatherResult.Success) {
+fun CurrentForecast(current: Current, minutely: List<Minutely>) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
     ) {
         item {
-            LocationInfo(
-                lat = data.lat,
-                lon = data.lon,
-                tz = data.timezone,
-                tzOffset = data.timezone_offset
-            )
-        }
-        item {
-            Row {
-                Text(text = data.current.weather.toString())
+            Column {
+                Text(text = current.dt.toString())
                 Image(
-                    painter = rememberCoilPainter("https://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png"),
+                    painter = rememberCoilPainter("https://openweathermap.org/img/wn/${current.weather[0].icon}@2x.png"),
                     contentDescription = "Forecast image"
                 )
             }
