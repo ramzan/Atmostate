@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
@@ -22,6 +23,7 @@ import ca.ramzan.atmostate.network.WeatherResult
 import ca.ramzan.atmostate.ui.theme.AtmostateTheme
 import ca.ramzan.atmostate.ui.theme.Orange100
 import ca.ramzan.atmostate.ui.theme.Orange500
+import com.google.accompanist.coil.rememberCoilPainter
 import kotlinx.coroutines.flow.collect
 
 class MainActivity : ComponentActivity() {
@@ -47,15 +49,10 @@ fun App(state: MainState) {
             content = {
                 when (state) {
                     is MainState.Error -> CenteredItem {
-                        Text(
-                            text = state.error,
-                            textAlign = TextAlign.Center
-                        )
+                        Text(text = state.error, textAlign = TextAlign.Center)
                     }
                     is MainState.Loaded -> CurrentForecast(data = state.data)
-                    is MainState.Loading -> CenteredItem {
-                        CircularProgressIndicator()
-                    }
+                    is MainState.Loading -> CenteredItem { CircularProgressIndicator() }
                 }
             },
             backgroundColor = Orange100,
@@ -101,6 +98,15 @@ fun CurrentForecast(data: WeatherResult.Success) {
                 tz = data.timezone,
                 tzOffset = data.timezone_offset
             )
+        }
+        item {
+            Row {
+                Text(text = data.current.weather.toString())
+                Image(
+                    painter = rememberCoilPainter("https://openweathermap.org/img/wn/${data.current.weather[0].icon}@2x.png"),
+                    contentDescription = "Forecast image"
+                )
+            }
         }
     }
 }
