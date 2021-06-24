@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -17,8 +18,9 @@ import ca.ramzan.atmostate.network.Daily
 import ca.ramzan.atmostate.ui.theme.Lime200
 
 @Composable
-fun DailyForecast(daily: List<Daily>) {
+fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)

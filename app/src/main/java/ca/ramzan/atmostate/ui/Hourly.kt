@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
@@ -13,8 +14,9 @@ import ca.ramzan.atmostate.network.Hourly
 import ca.ramzan.atmostate.ui.theme.Lime200
 
 @Composable
-fun HourlyForecast(hourly: List<Hourly>) {
+fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
     LazyColumn(
+        state = listState,
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp, 16.dp, 16.dp, 0.dp)

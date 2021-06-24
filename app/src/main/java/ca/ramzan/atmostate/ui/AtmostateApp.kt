@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -29,6 +30,10 @@ val tabTitles = listOf("Current", "Hourly", "Daily")
 fun AtmostateApp(vm: MainViewModel = viewModel()) {
     val state = vm.state.collectAsState()
     val (tabIndex, setTabIndex) = rememberSaveable { mutableStateOf(0) }
+    val currentListState = rememberLazyListState()
+    val hourlyListState = rememberLazyListState()
+    val dailyListState = rememberLazyListState()
+
     AtmostateTheme {
         Scaffold(
             topBar = { MainAppBar(tabIndex, setTabIndex) },
@@ -39,9 +44,9 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
                         Text(text = s.error, textAlign = TextAlign.Center)
                     }
                     is MainState.Loaded -> when (tabIndex) {
-                        0 -> CurrentForecast(s.data.current)
-                        1 -> HourlyForecast(hourly = s.data.hourly)
-                        2 -> DailyForecast(daily = s.data.daily)
+                        0 -> CurrentForecast(currentListState, s.data.current)
+                        1 -> HourlyForecast(hourlyListState, s.data.hourly)
+                        2 -> DailyForecast(dailyListState, s.data.daily)
                         else -> throw Exception("Illegal tab index: $tabIndex")
                     }
                     is MainState.Loading -> CenteredItem { CircularProgressIndicator() }
