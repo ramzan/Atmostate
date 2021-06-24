@@ -48,6 +48,22 @@ fun Pop(pop: Double) {
 }
 
 @Composable
+fun Rain(rain: Double) {
+    Row {
+        Text(text = "Rain: ", style = TextStyle(fontWeight = FontWeight.Bold))
+        Text(text = "$rain mm")
+    }
+}
+
+@Composable
+fun Snow(snow: Double) {
+    Row {
+        Text(text = "Snow: ", style = TextStyle(fontWeight = FontWeight.Bold))
+        Text(text = "$snow mm")
+    }
+}
+
+@Composable
 fun Temperature(temp: Double, feelsLike: Double) {
     Column {
         Row {

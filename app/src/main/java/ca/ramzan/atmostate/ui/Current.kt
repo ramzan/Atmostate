@@ -59,8 +59,8 @@ fun CurrentForecast(current: Current) {
             item { Clouds(clouds, visibility) }
             item { UVIndex(uvi) }
             if (windSpeed != 0.0) item { Wind(windSpeed, windGust, windDeg) }
-            rain?.let { item { Rain(it) } }
-            snow?.let { item { Snow(it) } }
+            rain?.let { item { Rain(it.hour) } }
+            snow?.let { item { Snow(it.hour) } }
             items(weather.size) { weather.forEach { Weather(it) } }
         }
     }
@@ -73,22 +73,6 @@ fun LocationInfo(lat: Double, lon: Double, tz: String, tzOffset: Long) {
         Text(text = "Coordinates: $lat, $lon")
         Text(text = "Time zone: $tz")
         Text(text = "Time zone offset: $tzOffset")
-    }
-}
-
-@Composable
-fun Rain(rain: Precipitation) {
-    Row {
-        Text(text = "Rain: ", style = TextStyle(fontWeight = FontWeight.Bold))
-        Text(text = "${rain.hour} mm")
-    }
-}
-
-@Composable
-fun Snow(snow: Precipitation) {
-    Row {
-        Text(text = "Snow: ", style = TextStyle(fontWeight = FontWeight.Bold))
-        Text(text = "${snow.hour} mm")
     }
 }
 
