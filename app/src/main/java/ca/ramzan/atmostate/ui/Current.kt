@@ -65,7 +65,6 @@ fun CurrentForecast(current: Current) {
     }
 }
 
-
 @Composable
 fun LocationInfo(lat: Double, lon: Double, tz: String, tzOffset: Long) {
     Column {
@@ -73,45 +72,6 @@ fun LocationInfo(lat: Double, lon: Double, tz: String, tzOffset: Long) {
         Text(text = "Coordinates: $lat, $lon")
         Text(text = "Time zone: $tz")
         Text(text = "Time zone offset: $tzOffset")
-    }
-}
-
-@Composable
-fun Clouds(clouds: Double, uvi: Double, visibility: Double) {
-    Column {
-        Row {
-            Text(text = "Cloudiness: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$clouds%")
-        }
-        Row {
-            Text(text = "UV Index: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$uvi")
-        }
-        Row {
-            Text(text = "Visibility: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$visibility m")
-        }
-    }
-}
-
-@Composable
-fun Wind(speed: Double, gust: Double?, deg: Int) {
-    Column {
-        Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Bold))
-        Row {
-            Text(text = "Speed: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$speed m/s")
-        }
-        gust?.run {
-            Row {
-                Text(text = "Gust: ", style = TextStyle(fontWeight = FontWeight.Bold))
-                Text(text = "$gust m/s")
-            }
-        }
-        Row {
-            Text(text = "Direction: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$deg°")
-        }
     }
 }
 
@@ -146,32 +106,6 @@ fun Weather(weather: Weather) {
 }
 
 @Composable
-fun TimeUpdated(time: Long) {
-    Row {
-        Text(text = "Last Updated: ", style = TextStyle(fontWeight = FontWeight.Bold))
-        Text(text = "$time")
-    }
-}
-
-@Composable
-fun AirInfo(pressure: Double, humidity: Double, dewPoint: Double) {
-    Column {
-        Row {
-            Text(text = "Pressure: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$pressure hPa")
-        }
-        Row {
-            Text(text = "Humidity: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$humidity%")
-        }
-        Row {
-            Text(text = "Dew Point: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$dewPoint K")
-        }
-    }
-}
-
-@Composable
 fun SunriseSunset(sunrise: Long, sunset: Long) {
     Column {
         Row {
@@ -184,35 +118,3 @@ fun SunriseSunset(sunrise: Long, sunset: Long) {
         }
     }
 }
-
-@Composable
-fun Temperature(temp: Double, feelsLike: Double) {
-    Column {
-        Row {
-            Text(text = "Temperature: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$temp K")
-        }
-        Row {
-            Text(text = "Feels like: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$feelsLike K")
-        }
-    }
-}
-
-//val dt: Long,
-//val sunrise: Long,
-//val sunset: Long,
-//val temp: Double,
-//@Json(name = "feels_like") val feelsLike: Double,
-//val pressure: Double,
-//val humidity: Double,
-//@Json(name = "dew_point") val dewPoint: Double,
-//val clouds: Double,
-//val uvi: Double,
-//val visibility: Double,
-//@Json(name = "wind_speed") val windSpeed: Double,
-//@Json(name = "wind_gust") val windGust: Double?,
-//@Json(name = "wind_deg") val windDeg: Double,
-//val rain: Precipitation?,
-//val snow: Precipitation?,
-//val weather: List<Weather>
