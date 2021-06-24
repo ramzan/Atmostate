@@ -78,7 +78,7 @@ data class Daily(
     val moonset: Long,
     @Json(name = "moon_phase") val moonPhase: Double,
     val temp: Temp,
-    @Json(name = "feels_like") val feelsLike: FeelsLike,
+    @Json(name = "feels_like") val feelsLike: FeelsLike?,
     val pressure: Double,
     val humidity: Double,
     @Json(name = "dew_point") val dewPoint: Double,
