@@ -7,6 +7,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 
+val directions = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
+
+fun degreeToDirection(deg: Int): String {
+    return directions[(deg % 360) / 45]
+}
+
 @Composable
 fun AirInfo(pressure: Double, humidity: Double, dewPoint: Double) {
     Column {
@@ -99,17 +105,13 @@ fun Wind(speed: Double, gust: Double?, deg: Int) {
         Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Bold))
         Row {
             Text(text = "Speed: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$speed m/s")
+            Text(text = "$speed m/s ${degreeToDirection(deg)}")
         }
         gust?.run {
             Row {
                 Text(text = "Gust: ", style = TextStyle(fontWeight = FontWeight.Bold))
                 Text(text = "$gust m/s")
             }
-        }
-        Row {
-            Text(text = "Direction: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$deg°")
         }
     }
 }
