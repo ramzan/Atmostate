@@ -9,7 +9,6 @@ sealed class WeatherResult {
         val timezone: String,
         val timezone_offset: Long,
         val current: Current,
-        val minutely: List<Minutely>,
         val hourly: List<Hourly>,
         val daily: List<Daily>,
         val alerts: List<Alert>,
@@ -50,11 +49,6 @@ data class Current(
     val rain: Precipitation?,
     val snow: Precipitation?,
     val weather: List<Weather>
-)
-
-data class Minutely(
-    val dt: Long,
-    val precipitation: Double
 )
 
 data class Hourly(

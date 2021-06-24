@@ -12,11 +12,10 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ca.ramzan.atmostate.network.Current
-import ca.ramzan.atmostate.network.Minutely
 import com.google.accompanist.coil.rememberCoilPainter
 
 @Composable
-fun CurrentForecast(current: Current, minutely: List<Minutely>) {
+fun CurrentForecast(current: Current) {
     LazyColumn(
         modifier = Modifier
             .fillMaxWidth()

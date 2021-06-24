@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,7 +39,7 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
                         Text(text = s.error, textAlign = TextAlign.Center)
                     }
                     is MainState.Loaded -> when (tabIndex) {
-                        0 -> CurrentForecast(s.data.current, s.data.minutely)
+                        0 -> CurrentForecast(s.data.current)
                         1 -> HourlyForecast(hourly = s.data.hourly)
                         2 -> DailyForecast(daily = s.data.daily)
                         else -> throw Exception("Illegal tab index: $tabIndex")

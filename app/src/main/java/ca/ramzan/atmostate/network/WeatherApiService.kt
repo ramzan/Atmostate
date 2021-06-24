@@ -11,6 +11,7 @@ interface WeatherApiService {
     suspend fun getForecast(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
+        @Query("exclude") exclude: String = "minutely",
         @Query("appid") appId: String = BuildConfig.OWM_API_KEY,
     ): WeatherResult.Success
 }
