@@ -36,7 +36,7 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                         AirInfo(pressure, humidity, dewPoint)
                         Clouds(clouds, visibility)
                         UVIndex(uvi)
-                        Wind(windSpeed, windGust, windDeg)
+                        Wind(windSpeed, windGust, degreeToDirection(windDeg))
                         Pop(pop)
                         rain?.let { Rain(it.hour) }
                         snow?.let { Snow(it.hour) }

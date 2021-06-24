@@ -29,7 +29,7 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
             item { AirInfo(pressure, humidity, dewPoint) }
             item { Clouds(clouds, visibility) }
             item { UVIndex(uvi) }
-            item { Wind(windSpeed, windGust, windDeg) }
+            item { Wind(windSpeed, windGust, degreeToDirection(windDeg)) }
             rain?.let { item { Rain(it.hour) } }
             snow?.let { item { Snow(it.hour) } }
             items(weather.size) { weather.forEach { Weather(it) } }

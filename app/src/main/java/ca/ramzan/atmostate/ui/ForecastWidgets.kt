@@ -14,7 +14,7 @@ fun degreeToDirection(deg: Int): String {
 }
 
 fun getMoonPhaseDescription(phase: Double): String {
-    return when  {
+    return when {
         phase == 0.0 || phase == 1.0 -> "New Moon"
         phase == 0.25 -> "First Quarter Moon"
         phase == 0.5 -> "Full Moon"
@@ -114,12 +114,12 @@ fun UVIndex(uvi: Double) {
 }
 
 @Composable
-fun Wind(speed: Double, gust: Double?, deg: Int) {
+fun Wind(speed: Double, gust: Double?, direction: String) {
     Column {
         Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Bold))
         Row {
             Text(text = "Speed: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$speed m/s ${degreeToDirection(deg)}")
+            Text(text = "$speed m/s $direction")
         }
         gust?.run {
             Row {

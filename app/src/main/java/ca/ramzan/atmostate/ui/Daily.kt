@@ -39,7 +39,7 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                         MoonInfo(moonrise, moonset, getMoonPhaseDescription(moonPhase))
                         DailyTemperature(temp, feelsLike)
                         AirInfo(pressure, humidity, dewPoint)
-                        Wind(windSpeed, windGust, windDeg)
+                        Wind(windSpeed, windGust, degreeToDirection(windDeg))
                         UVIndex(uvi)
                         Pop(pop)
                         rain?.let { Rain(it) }
