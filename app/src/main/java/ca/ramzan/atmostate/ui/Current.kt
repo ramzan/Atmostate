@@ -1,10 +1,7 @@
 package ca.ramzan.atmostate.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
@@ -21,9 +18,9 @@ import com.google.accompanist.coil.rememberCoilPainter
 fun CurrentForecast(listState: LazyListState, current: Current) {
     LazyColumn(
         state = listState,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
         current.run {
             item { TimeUpdated(dt) }

@@ -1,9 +1,7 @@
 package ca.ramzan.atmostate.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
@@ -17,9 +15,10 @@ import ca.ramzan.atmostate.ui.theme.Lime200
 fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
     LazyColumn(
         state = listState,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp, 16.dp, 16.dp, 0.dp)
     ) {
         items(hourly.size) {
             hourly.forEach { hour ->
@@ -29,7 +28,8 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                             .fillMaxWidth()
                             .padding(0.dp, 0.dp, 0.dp, 16.dp)
                             .background(Lime200, RectangleShape)
-                            .padding(12.dp)
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         TimeUpdated(dt)
                         Temperature(temp, feelsLike)

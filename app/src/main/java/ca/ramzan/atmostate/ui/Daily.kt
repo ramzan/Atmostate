@@ -1,10 +1,7 @@
 package ca.ramzan.atmostate.ui
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
@@ -21,9 +18,10 @@ import ca.ramzan.atmostate.ui.theme.Lime200
 fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
     LazyColumn(
         state = listState,
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp)
     ) {
         items(daily.size) {
             daily.forEach { day ->
@@ -33,7 +31,8 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                             .fillMaxWidth()
                             .padding(0.dp, 0.dp, 0.dp, 16.dp)
                             .background(Lime200, RectangleShape)
-                            .padding(12.dp)
+                            .padding(12.dp),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
                     ) {
                         TimeUpdated(dt)
                         SunriseSunset(sunrise, sunset)
