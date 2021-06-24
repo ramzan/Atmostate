@@ -36,7 +36,8 @@ fun HourlyForecast(hourly: List<Hourly>) {
                         TimeUpdated(dt)
                         Temperature(temp, feelsLike)
                         AirInfo(pressure, humidity, dewPoint)
-                        Clouds(clouds, uvi, visibility)
+                        Clouds(clouds, visibility)
+                        UVIndex(uvi)
                         Wind(windSpeed, windGust, windDeg)
                         Pop(pop)
                         rain?.let { Rain(it) }
@@ -46,13 +47,5 @@ fun HourlyForecast(hourly: List<Hourly>) {
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Pop(pop: Double) {
-    Row {
-        Text(text = "POP: ", style = TextStyle(fontWeight = FontWeight.Bold))
-        Text(text = "$pop%")
     }
 }

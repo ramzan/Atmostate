@@ -56,7 +56,8 @@ fun CurrentForecast(current: Current) {
             if (sunrise != 0L) item { SunriseSunset(sunrise, sunset) }
             item { Temperature(temp, feelsLike) }
             item { AirInfo(pressure, humidity, dewPoint) }
-            item { Clouds(clouds, uvi, visibility) }
+            item { Clouds(clouds, visibility) }
+            item { UVIndex(uvi) }
             if (windSpeed != 0.0) item { Wind(windSpeed, windGust, windDeg) }
             rain?.let { item { Rain(it) } }
             snow?.let { item { Snow(it) } }

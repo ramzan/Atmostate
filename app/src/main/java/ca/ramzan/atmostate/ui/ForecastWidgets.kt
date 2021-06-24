@@ -26,20 +26,24 @@ fun AirInfo(pressure: Double, humidity: Double, dewPoint: Double) {
 }
 
 @Composable
-fun Clouds(clouds: Double, uvi: Double, visibility: Double) {
+fun Clouds(clouds: Double, visibility: Double) {
     Column {
         Row {
             Text(text = "Cloudiness: ", style = TextStyle(fontWeight = FontWeight.Bold))
             Text(text = "$clouds%")
         }
         Row {
-            Text(text = "UV Index: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$uvi")
-        }
-        Row {
             Text(text = "Visibility: ", style = TextStyle(fontWeight = FontWeight.Bold))
             Text(text = "$visibility m")
         }
+    }
+}
+
+@Composable
+fun Pop(pop: Double) {
+    Row {
+        Text(text = "POP: ", style = TextStyle(fontWeight = FontWeight.Bold))
+        Text(text = "$pop%")
     }
 }
 
@@ -62,6 +66,14 @@ fun TimeUpdated(time: Long) {
     Row {
         Text(text = "Last Updated: ", style = TextStyle(fontWeight = FontWeight.Bold))
         Text(text = "$time")
+    }
+}
+
+@Composable
+fun UVIndex(uvi: Double) {
+    Row {
+        Text(text = "UV Index: ", style = TextStyle(fontWeight = FontWeight.Bold))
+        Text(text = "$uvi")
     }
 }
 
