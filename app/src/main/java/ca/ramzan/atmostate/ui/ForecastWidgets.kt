@@ -13,6 +13,20 @@ fun degreeToDirection(deg: Int): String {
     return directions[(deg % 360) / 45]
 }
 
+fun getMoonPhaseDescription(phase: Double): String {
+    return when  {
+        phase == 0.0 || phase == 1.0 -> "New Moon"
+        phase == 0.25 -> "First Quarter Moon"
+        phase == 0.5 -> "Full Moon"
+        phase == 0.75 -> "Last Quarter Moon"
+        phase > 0.75 -> "Waning Crescent"
+        phase > 0.5 -> "Waning Gibbous"
+        phase > 0.25 -> "Waxing Gibbous"
+        phase > 0.0 -> "Waxing Crescent"
+        else -> throw Exception("Invalid moon phase $phase")
+    }
+}
+
 @Composable
 fun AirInfo(pressure: Double, humidity: Double, dewPoint: Double) {
     Column {

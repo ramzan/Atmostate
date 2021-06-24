@@ -36,7 +36,7 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                     ) {
                         TimeUpdated(dt)
                         SunriseSunset(sunrise, sunset)
-                        MoonInfo(moonrise, moonset, moonPhase)
+                        MoonInfo(moonrise, moonset, getMoonPhaseDescription(moonPhase))
                         DailyTemperature(temp, feelsLike)
                         AirInfo(pressure, humidity, dewPoint)
                         Wind(windSpeed, windGust, windDeg)
@@ -53,7 +53,7 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
 }
 
 @Composable
-fun MoonInfo(moonrise: Long, moonset: Long, moonPhase: Double) {
+fun MoonInfo(moonrise: Long, moonset: Long, moonPhase: String) {
     Column {
         Row {
             Text(text = "Moonrise: ", style = TextStyle(fontWeight = FontWeight.Bold))
@@ -65,7 +65,7 @@ fun MoonInfo(moonrise: Long, moonset: Long, moonPhase: Double) {
         }
         Row {
             Text(text = "Moon phase: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "$moonPhase")
+            Text(text = moonPhase)
         }
     }
 }
