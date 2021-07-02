@@ -10,8 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -23,31 +22,37 @@ import ca.ramzan.atmostate.MainViewModel
 import ca.ramzan.atmostate.ui.theme.AtmostateTheme
 import ca.ramzan.atmostate.ui.theme.Orange100
 import ca.ramzan.atmostate.ui.theme.Orange500
+import com.google.accompanist.pager.*
+import kotlinx.coroutines.launch
 
 val tabTitles = listOf("Current", "Hourly", "Daily")
 
+@ExperimentalPagerApi
 @Composable
 fun AtmostateApp(vm: MainViewModel = viewModel()) {
     val state = vm.state.collectAsState()
-    val (tabIndex, setTabIndex) = rememberSaveable { mutableStateOf(0) }
     val currentListState = rememberLazyListState()
     val hourlyListState = rememberLazyListState()
     val dailyListState = rememberLazyListState()
+    val pagerState = rememberPagerState(pageCount = 3)
 
     AtmostateTheme {
         Scaffold(
-            topBar = { MainAppBar(tabIndex, setTabIndex) },
+            topBar = { MainAppBar(pagerState) },
             drawerContent = { Text(text = "drawerContent") },
             content = {
                 when (val s = state.value) {
                     is MainState.Error -> CenteredItem {
                         Text(text = s.error, textAlign = TextAlign.Center)
                     }
-                    is MainState.Loaded -> when (tabIndex) {
-                        0 -> CurrentForecast(currentListState, s.data.current)
-                        1 -> HourlyForecast(hourlyListState, s.data.hourly)
-                        2 -> DailyForecast(dailyListState, s.data.daily)
-                        else -> throw Exception("Illegal tab index: $tabIndex")
+                    is MainState.Loaded -> {
+                        HorizontalPager(state = pagerState) { page ->
+                            when (page) {
+                                0 -> CurrentForecast(currentListState, s.data.current)
+                                1 -> HourlyForecast(hourlyListState, s.data.hourly)
+                                2 -> DailyForecast(dailyListState, s.data.daily)
+                            }
+                        }
                     }
                     is MainState.Loading -> CenteredItem { CircularProgressIndicator() }
                 }
@@ -57,8 +62,10 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
     }
 }
 
+@ExperimentalPagerApi
 @Composable
-fun MainAppBar(tabIndex: Int, onTabSelected: (Int) -> Unit) {
+fun MainAppBar(pagerState: PagerState) {
+    val scope = rememberCoroutineScope()
     Column {
         TopAppBar(
             title = { Text("TopAppBar") },
@@ -69,11 +76,20 @@ fun MainAppBar(tabIndex: Int, onTabSelected: (Int) -> Unit) {
                 }
             }
         )
-        TabRow(selectedTabIndex = tabIndex) {
+        TabRow(
+            selectedTabIndex = pagerState.currentPage,
+            indicator = { tabPositions ->
+                TabRowDefaults.Indicator(
+                    Modifier.pagerTabIndicatorOffset(pagerState, tabPositions)
+                )
+            }
+        ) {
             tabTitles.mapIndexed { idx, title ->
-                Tab(selected = false, onClick = { onTabSelected(idx) }) {
-                    Text(title)
-                }
+                Tab(
+                    text = { Text(title) },
+                    selected = pagerState.currentPage == idx,
+                    onClick = { scope.launch { pagerState.scrollToPage(idx) } }
+                )
             }
         }
     }
@@ -90,6 +106,7 @@ fun CenteredItem(content: @Composable () -> Unit) {
     ) { content() }
 }
 
+@ExperimentalPagerApi
 @Preview(showBackground = true)
 @Composable
 fun DefaultPreview() {
