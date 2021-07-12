@@ -11,7 +11,7 @@ sealed class WeatherResult {
         val current: Current,
         val hourly: List<Hourly>,
         val daily: List<Daily>,
-        val alerts: List<Alert>,
+        val alerts: List<Alert>?,
     ) : WeatherResult()
 
     data class Failure(
