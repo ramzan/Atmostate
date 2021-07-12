@@ -101,7 +101,7 @@ fun Temperature(temp: Double, feelsLike: Double) {
 fun TimeUpdated(time: Long) {
     Row {
         Text(text = "Last Updated: ", style = TextStyle(fontWeight = FontWeight.Bold))
-        Text(text = "$time")
+        Text(text = TimeFormatter.toDate(time))
     }
 }
 

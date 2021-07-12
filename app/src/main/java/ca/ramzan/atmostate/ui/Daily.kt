@@ -1,18 +1,24 @@
 package ca.ramzan.atmostate.ui
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ca.ramzan.atmostate.network.Daily
+import ca.ramzan.atmostate.network.Weather
 import ca.ramzan.atmostate.ui.theme.Lime200
+import com.google.accompanist.coil.rememberCoilPainter
+import com.ramzan.atmostate.R
 
 @Composable
 fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
@@ -49,6 +55,20 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                 }
             }
         }
+    }
+}
+
+@Composable
+fun Weather(weather: Weather) {
+    Column {
+        Text(text = "Weather", style = TextStyle(fontWeight = FontWeight.Bold))
+        Text(weather.id)
+        Text(weather.main)
+        Text(weather.description)
+        Image(
+            painter = rememberCoilPainter("https://openweathermap.org/img/wn/${weather.icon}@2x.png"),
+            contentDescription = "Forecast image"
+        )
     }
 }
 
@@ -101,6 +121,38 @@ fun DailyTemperature(temp: Daily.Temp, feelsLike: Daily.FeelsLike?) {
         Row {
             Text(text = "Max: ", style = TextStyle(fontWeight = FontWeight.Bold))
             Text(text = "${temp.max} K")
+        }
+    }
+}
+
+@Composable
+fun SunriseSunset(sunrise: Long, sunset: Long) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.sunrise),
+                contentDescription = "Sunrise icon"
+            )
+            Text(text = "Sunrise", style = TextStyle(fontWeight = FontWeight.Bold))
+            Text(text = TimeFormatter.toDayHour(sunrise))
+        }
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(R.drawable.sunset),
+                contentDescription = "Sunset icon"
+            )
+            Text(text = "Sunset", style = TextStyle(fontWeight = FontWeight.Bold))
+            Text(text = TimeFormatter.toDayHour(sunset))
         }
     }
 }

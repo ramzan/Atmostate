@@ -23,8 +23,8 @@ class MainViewModel : ViewModel() {
     val state: StateFlow<MainState> get() = _state
 
     init {
-        val lat = 53.44
-        val lon = -94.04
+        val lat = 43.5789
+        val lon = -79.6583
         viewModelScope.launch {
             WeatherApi.getForecast(lat, lon).run {
                 when (this) {
