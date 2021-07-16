@@ -40,11 +40,10 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Wind(
-                        (windSpeed * 1000 / 3600).roundToInt(),
-                        windGust?.let { (it * 1000 / 3600).roundToInt() },
+                        (windSpeed * 3.6).roundToInt(),
+                        windGust?.let { (it * 3.6).roundToInt() },
                         degreeToDirection(windDeg)
                     )
                     Humidity("${humidity.roundToInt()}%")
@@ -56,7 +55,6 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
-                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Cloudiness(clouds.toInt())
                     Sunrise(sunrise)
@@ -64,10 +62,18 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
                     DewPoint("${dewPoint.roundToInt()}°C")
                 }
             }
-            item { UVIndex(uvi) }
+            item { UVIndex(uvi.roundToInt()) }
             rain?.let { item { Rain(it.hour) } }
             snow?.let { item { Snow(it.hour) } }
         }
+    }
+}
+
+@Composable
+fun UVIndex(uvi: Int) {
+    Row {
+        Text(text = "UV Index: ", style = TextStyle(fontWeight = FontWeight.Bold))
+        Text(text = "$uvi")
     }
 }
 
@@ -84,7 +90,7 @@ fun Wind(speed: Int, gust: Int?, direction: String) {
         Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Light))
         Text(text = "${speed}km/h $direction")
         gust?.run {
-            Text(text = "$gust m/s")
+            Text(text = "${gust}km/h")
         }
     }
 }
