@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import ca.ramzan.atmostate.network.Daily
 import ca.ramzan.atmostate.network.Weather
 import ca.ramzan.atmostate.ui.theme.Lime200
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
 
 @Composable
@@ -66,8 +66,9 @@ fun Weather(weather: Weather) {
         Text(weather.main)
         Text(weather.description)
         Image(
-            painter = rememberCoilPainter("https://openweathermap.org/img/wn/${weather.icon}@2x.png"),
-            contentDescription = "Forecast image"
+            painter = rememberImagePainter("https://openweathermap.org/img/wn/${weather.icon}@2x.png"),
+            contentDescription = "Forecast image",
+            modifier = Modifier.size(48.dp)
         )
     }
 }

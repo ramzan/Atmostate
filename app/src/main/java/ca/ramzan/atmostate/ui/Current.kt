@@ -15,7 +15,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import ca.ramzan.atmostate.network.Current
 import ca.ramzan.atmostate.network.Weather
-import com.google.accompanist.coil.rememberCoilPainter
+import coil.compose.rememberImagePainter
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -35,7 +35,14 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
     ) {
         current.run {
             item { TimeUpdated(dt) }
-            item { Weather(weather.first(), temp.roundToInt(), feelsLike.roundToInt()) }
+            item {
+                Weather(
+                    weather.first(),
+                    temp.roundToInt(),
+                    feelsLike.roundToInt(),
+                    uvi.roundToInt()
+                )
+            }
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -62,18 +69,9 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
                     DewPoint("${dewPoint.roundToInt()}°C")
                 }
             }
-            item { UVIndex(uvi.roundToInt()) }
             rain?.let { item { Rain(it.hour) } }
             snow?.let { item { Snow(it.hour) } }
         }
-    }
-}
-
-@Composable
-fun UVIndex(uvi: Int) {
-    Row {
-        Text(text = "UV Index: ", style = TextStyle(fontWeight = FontWeight.Bold))
-        Text(text = "$uvi")
     }
 }
 
@@ -181,21 +179,23 @@ fun LocationInfo(lat: Double, lon: Double, tz: String, tzOffset: Long) {
 }
 
 @Composable
-fun Weather(weather: Weather, temp: Int, feelsLike: Int) {
-    Column(
+fun Weather(weather: Weather, temp: Int, feelsLike: Int, uvi: Int) {
+    Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            Image(
-                painter = rememberCoilPainter("https://openweathermap.org/img/wn/${weather.icon}@4x.png"),
-                contentDescription = "Forecast image"
-            )
+        Image(
+            painter = rememberImagePainter("https://openweathermap.org/img/wn/${weather.icon}@4x.png"),
+            contentDescription = "Forecast image",
+            modifier = Modifier.size(128.dp)
+        )
+        Column {
             Text(text = "$temp°C", style = MaterialTheme.typography.h3)
+            Text(text = "Feels like $feelsLike")
+            Text(weather.description.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
+            Text("UV Index: $uvi")
         }
-        Text(text = "Feels like $feelsLike°C")
-        Text(weather.description.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
     }
 }
 
