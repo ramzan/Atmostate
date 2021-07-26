@@ -230,17 +230,24 @@ fun Sunset(sunset: Long) {
 }
 
 object TimeFormatter {
-    private val format = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault())
+    private val dayHourFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault())
+    private val hourOfDayFormatter = DateTimeFormatter.ofPattern("ha").withZone(ZoneId.systemDefault())
 
     fun toDayHour(time: Long): String {
         return Instant.ofEpochSecond(time).run {
-            format.format(this)
+            dayHourFormatter.format(this)
         }
     }
 
     fun toDate(time: Long): String {
         return Instant.ofEpochSecond(time).run {
             DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.systemDefault()).format(this)
+        }
+    }
+
+    fun toHourOfDay(time: Long): String {
+        return Instant.ofEpochSecond(time).run {
+            hourOfDayFormatter.format(this)
         }
     }
 }
