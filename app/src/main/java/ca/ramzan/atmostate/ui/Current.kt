@@ -75,8 +75,6 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
 
                 }
             }
-            rain?.let { item { Rain(it.hour) } }
-            snow?.let { item { Snow(it.hour) } }
         }
     }
 }
@@ -187,16 +185,6 @@ fun DewPoint(dewPoint: String) {
 }
 
 @Composable
-fun LocationInfo(lat: Double, lon: Double, tz: String, tzOffset: Long) {
-    Column {
-        Text(text = "Location", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(text = "Coordinates: $lat, $lon")
-        Text(text = "Time zone: $tz")
-        Text(text = "Time zone offset: $tzOffset")
-    }
-}
-
-@Composable
 fun Weather(weather: Weather, temp: Int, feelsLike: Int, uvi: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -248,8 +236,10 @@ fun Sunset(sunset: Long) {
 }
 
 object TimeFormatter {
-    private val dayHourFormatter = DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault())
-    private val hourOfDayFormatter = DateTimeFormatter.ofPattern("ha").withZone(ZoneId.systemDefault())
+    private val dayHourFormatter =
+        DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault())
+    private val hourOfDayFormatter =
+        DateTimeFormatter.ofPattern("ha").withZone(ZoneId.systemDefault())
 
     fun toDayHour(time: Long): String {
         return Instant.ofEpochSecond(time).run {
