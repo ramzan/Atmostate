@@ -53,7 +53,7 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
                     GridColumn {
                         Wind(
                             (windSpeed * 3.6).roundToInt(),
-                            windGust?.let { (it * 3.6).roundToInt() },
+                            ((windGust ?: 0.0) * 3.6).roundToInt(),
                             degreeToDirection(windDeg)
                         )
                         Cloudiness(clouds.toInt())
@@ -93,7 +93,7 @@ fun GridColumn(content: @Composable () -> Unit) {
 }
 
 @Composable
-fun Wind(speed: Int, gust: Int?, direction: String) {
+fun Wind(speed: Int, gust: Int, direction: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
@@ -104,9 +104,7 @@ fun Wind(speed: Int, gust: Int?, direction: String) {
         )
         Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Light))
         Text(text = "${speed}km/h $direction")
-        gust?.run {
-            Text(text = "${gust}km/h")
-        }
+        Text(text = "${gust}km/h")
     }
 }
 
