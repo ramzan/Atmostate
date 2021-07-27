@@ -23,6 +23,8 @@ import java.util.*
 import kotlin.math.roundToInt
 import com.ramzan.atmostate.R as AtmostateR
 
+private val gridPadding = 24.dp
+
 @Composable
 fun CurrentForecast(listState: LazyListState, current: Current) {
     LazyColumn(
@@ -48,30 +50,45 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceEvenly,
                 ) {
-                    Wind(
-                        (windSpeed * 3.6).roundToInt(),
-                        windGust?.let { (it * 3.6).roundToInt() },
-                        degreeToDirection(windDeg)
-                    )
-                    Humidity("${humidity.roundToInt()}%")
-                    Pressure("${"%.1f".format(pressure / 10)}kPa")
-                    Visibility((visibility / 1000).toInt())
-                }
-            }
-            item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceEvenly,
-                ) {
-                    Cloudiness(clouds.toInt())
-                    Sunrise(sunrise)
-                    Sunset(sunset)
-                    DewPoint("${dewPoint.roundToInt()}°C")
+                    GridColumn {
+                        Wind(
+                            (windSpeed * 3.6).roundToInt(),
+                            windGust?.let { (it * 3.6).roundToInt() },
+                            degreeToDirection(windDeg)
+                        )
+                        Cloudiness(clouds.toInt())
+                    }
+                    GridColumn {
+                        Humidity("${humidity.roundToInt()}%")
+                        Sunrise(sunrise)
+
+                    }
+                    GridColumn {
+                        Pressure("${"%.1f".format(pressure / 10)}kPa")
+                        Sunset(sunset)
+
+                    }
+                    GridColumn {
+                        Visibility((visibility / 1000).toInt())
+                        DewPoint("${dewPoint.roundToInt()}°C")
+                    }
+
                 }
             }
             rain?.let { item { Rain(it.hour) } }
             snow?.let { item { Snow(it.hour) } }
         }
+    }
+}
+
+@Composable
+fun GridColumn(content: @Composable () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxHeight()
+    ) {
+        content()
     }
 }
 
@@ -112,7 +129,8 @@ fun Cloudiness(clouds: Int) {
 fun Visibility(visibility: Int) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(bottom = gridPadding)
     ) {
         Image(
             painter = painterResource(AtmostateR.drawable.telescope),
@@ -127,7 +145,8 @@ fun Visibility(visibility: Int) {
 fun Pressure(pressure: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(bottom = gridPadding)
     ) {
         Image(
             painter = painterResource(AtmostateR.drawable.barometer),
@@ -142,7 +161,8 @@ fun Pressure(pressure: String) {
 fun Humidity(humidity: String) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(bottom = gridPadding)
     ) {
         Image(
             painter = painterResource(AtmostateR.drawable.humidity),
