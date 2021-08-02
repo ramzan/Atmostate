@@ -29,8 +29,8 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        items(daily.size) {
-            daily.forEach { day ->
+        daily.forEach { day ->
+            item {
                 day.run {
                     Column(
                         modifier = Modifier
