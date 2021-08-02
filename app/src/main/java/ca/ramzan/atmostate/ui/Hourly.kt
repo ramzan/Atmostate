@@ -2,26 +2,32 @@ package ca.ramzan.atmostate.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.ramzan.atmostate.network.Hourly
+import ca.ramzan.atmostate.ui.theme.Lime200
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
 import java.util.*
 import kotlin.math.roundToInt
 
+@ExperimentalFoundationApi
 @ExperimentalAnimationApi
 @Composable
 fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
@@ -31,10 +37,22 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        items(hourly.size) {
-            hourly.forEachIndexed { i, hour ->
-                val (expanded, setExpanded) = rememberSaveable(hour) { mutableStateOf(i == 0) }
-                hour.run {
+        hourly.forEachIndexed { i, hour ->
+            hour.run {
+                if (TimeFormatter.isMidnight(hour.dt)) {
+                    stickyHeader {
+                        Text(
+                            text = TimeFormatter.toWeekDay(hour.dt),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .background(Lime200, RectangleShape)
+                                .padding(horizontal = 16.dp, vertical = 4.dp),
+                            style = MaterialTheme.typography.subtitle1
+                        )
+                    }
+                }
+                item {
+                    val (expanded, setExpanded) = rememberSaveable(hour) { mutableStateOf(i == 0) }
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
