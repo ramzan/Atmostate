@@ -7,7 +7,9 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import ca.ramzan.atmostate.ui.AtmostateApp
 import com.google.accompanist.pager.ExperimentalPagerApi
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     @ExperimentalFoundationApi
     @ExperimentalAnimationApi

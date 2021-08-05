@@ -4,9 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.ramzan.atmostate.network.WeatherApi
 import ca.ramzan.atmostate.network.WeatherResult
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 sealed class MainState {
     object Loading : MainState()
@@ -17,7 +19,8 @@ sealed class MainState {
     data class Error(val error: String) : MainState()
 }
 
-class MainViewModel : ViewModel() {
+@HiltViewModel
+class MainViewModel @Inject constructor() : ViewModel() {
 
     private val _state = MutableStateFlow<MainState>(MainState.Loading)
     val state: StateFlow<MainState> get() = _state

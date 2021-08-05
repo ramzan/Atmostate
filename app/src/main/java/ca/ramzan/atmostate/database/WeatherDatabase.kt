@@ -1,19 +1,24 @@
 package ca.ramzan.atmostate.database
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
+import androidx.room.*
 
 
 const val DB_NAME = "weather_database"
 const val DB_VERSION = 1
 
+@Entity
+data class Weather(
+    @PrimaryKey(autoGenerate = true)
+    val id: Long = 0
+)
+
 @Database(
     entities = [
-//        Weather::class,
+        Weather::class,
     ],
-    version = DB_VERSION
+    version = DB_VERSION,
+    exportSchema = false
 )
 abstract class WeatherDatabase : RoomDatabase() {
 
