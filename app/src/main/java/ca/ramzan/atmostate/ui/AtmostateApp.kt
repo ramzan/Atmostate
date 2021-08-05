@@ -1,5 +1,7 @@
 package ca.ramzan.atmostate.ui
 
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +29,8 @@ import kotlinx.coroutines.launch
 
 val tabTitles = listOf("Current", "Hourly", "Daily")
 
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
 @ExperimentalPagerApi
 @Composable
 fun AtmostateApp(vm: MainViewModel = viewModel()) {
@@ -106,6 +110,8 @@ fun CenteredItem(content: @Composable () -> Unit) {
     ) { content() }
 }
 
+@ExperimentalFoundationApi
+@ExperimentalAnimationApi
 @ExperimentalPagerApi
 @Preview(showBackground = true)
 @Composable

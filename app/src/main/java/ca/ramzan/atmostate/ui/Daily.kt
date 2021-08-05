@@ -1,140 +1,176 @@
 package ca.ramzan.atmostate.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import ca.ramzan.atmostate.network.Daily
-import ca.ramzan.atmostate.network.Weather
 import ca.ramzan.atmostate.ui.theme.Lime200
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
+import kotlin.math.roundToInt
 
+@ExperimentalAnimationApi
+@ExperimentalFoundationApi
 @Composable
-fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
+fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
     LazyColumn(
         state = listState,
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .fillMaxWidth()
     ) {
-        daily.forEach { day ->
+        dailyForecast.forEachIndexed { i, daily ->
+            stickyHeader {
+                Text(
+                    text = TimeFormatter.toWeekDay(daily.dt),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(Lime200, RectangleShape)
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
+                    style = MaterialTheme.typography.subtitle1
+                )
+            }
             item {
-                day.run {
+                val (expanded, setExpanded) = rememberSaveable(daily) { mutableStateOf(i == 0) }
+                daily.run {
                     Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(0.dp, 0.dp, 0.dp, 16.dp)
-                            .background(Lime200, RectangleShape)
-                            .padding(12.dp),
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                            .clickable { setExpanded(!expanded) }
+                            .padding(16.dp, 8.dp, 16.dp, 12.dp),
                     ) {
-                        TimeUpdated(dt)
-                        SunriseSunset(sunrise, sunset)
-                        DailyTemperature(temp, feelsLike)
-                        AirInfo(pressure, humidity, dewPoint)
-                        Wind(windSpeed, windGust, degreeToDirection(windDeg))
-                        UVIndex(uvi)
-                        Pop(pop)
-                        rain?.let { Rain(it) }
-                        snow?.let { Snow(it) }
-                        weather.forEach { Weather(it) }
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                        ) {
+                            Column {
+                                Text(
+                                    text = weather.first().description.capitalized(),
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                ) {
+                                    Image(
+                                        painter = rememberImagePainter("https://openweathermap.org/img/wn/${weather.first().icon}@4x.png"),
+                                        contentDescription = "Forecast image",
+                                        modifier = Modifier.size(48.dp)
+                                    )
+                                    Text(
+                                        text = "High: ${temp.max.roundToInt()}°C",
+                                        fontSize = 18.sp,
+                                        modifier = Modifier.padding(end = 16.dp)
+                                    )
+                                    Text(
+                                        text = "Low: ${temp.min.roundToInt()}°C",
+                                        fontSize = 18.sp
+                                    )
+                                }
+                            }
+
+                            Column(
+                                horizontalAlignment = Alignment.End
+                            ) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Image(
+                                        painter = painterResource(R.drawable.rain_cloud),
+                                        contentDescription = "Probability of precipitation",
+                                        modifier = Modifier.padding(end = 8.dp)
+                                    )
+                                    Text(
+                                        "${(pop * 100).toInt()}%",
+                                        Modifier.wrapContentWidth(Alignment.End)
+                                    )
+                                }
+                                rain?.let { HourRain(it) }
+                                snow?.let { HourSnow(it) }
+                            }
+                        }
+                        AnimatedVisibility(expanded) {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 16.dp),
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceEvenly
+                                ) {
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(
+                                            text = "${(windSpeed * 3.6).roundToInt()} km/h ${
+                                                degreeToDirection(windDeg)
+                                            }"
+                                        )
+                                        Text(text = "Wind")
+                                    }
+
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(text = "${((windGust ?: 0.0) * 3.6).roundToInt()} km/h")
+                                        Text(text = "Wind Gust")
+                                    }
+
+                                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                        Text(text = "${humidity.roundToInt()}%")
+                                        Text(text = "Humidity")
+                                    }
+                                }
+                                Row(
+                                    horizontalArrangement = Arrangement.Center,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 16.dp)
+                                ) {
+                                    Column {
+                                        Text(text = "Morning: ", fontWeight = FontWeight.Bold)
+                                        Text(text = "Day: ", fontWeight = FontWeight.Bold)
+                                        Text(text = "Evening: ", fontWeight = FontWeight.Bold)
+                                        Text(text = "Night: ", fontWeight = FontWeight.Bold)
+                                    }
+                                    Column {
+                                        Text(text = "${temp.morn.roundToInt()}°")
+                                        Text(text = "${temp.day.roundToInt()}°")
+                                        Text(text = "${temp.eve.roundToInt()}°")
+                                        Text(text = "${temp.night.roundToInt()}°")
+                                    }
+                                    feelsLike?.run {
+                                        Column {
+                                            Text(text = " Feels like ${morn.roundToInt()}")
+                                            Text(text = " Feels like ${day.roundToInt()}")
+                                            Text(text = " Feels like ${eve.roundToInt()}")
+                                            Text(text = " Feels like ${night.roundToInt()}")
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun Weather(weather: Weather) {
-    Column {
-        Text(text = "Weather", style = TextStyle(fontWeight = FontWeight.Bold))
-        Text(weather.id)
-        Text(weather.main)
-        Text(weather.description)
-        Image(
-            painter = rememberImagePainter("https://openweathermap.org/img/wn/${weather.icon}@2x.png"),
-            contentDescription = "Forecast image",
-            modifier = Modifier.size(48.dp)
-        )
-    }
-}
-
-@Composable
-fun DailyTemperature(temp: Daily.Temp, feelsLike: Daily.FeelsLike?) {
-    Text(text = "Temperature", style = TextStyle(fontWeight = FontWeight.Bold))
-    Column {
-        Row {
-            Text(text = "Morning: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "${temp.morn} K")
-            if (feelsLike != null) Text(text = "feels like${feelsLike.morn} K")
-        }
-        Row {
-            Text(text = "Day: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "${temp.day} K")
-            if (feelsLike != null) Text(text = "feels like${feelsLike.day} K")
-        }
-        Row {
-            Text(text = "Evening: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "${temp.eve} K")
-            if (feelsLike != null) Text(text = "feels like${feelsLike.eve} K")
-        }
-        Row {
-            Text(text = "Night: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "${temp.night} K")
-            if (feelsLike != null) Text(text = "feels like${feelsLike.night} K")
-        }
-        Row {
-            Text(text = "Min: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "${temp.min} K")
-        }
-        Row {
-            Text(text = "Max: ", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = "${temp.max} K")
-        }
-    }
-}
-
-@Composable
-fun SunriseSunset(sunrise: Long, sunset: Long) {
-    Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.sunrise),
-                contentDescription = "Sunrise icon"
-            )
-            Text(text = "Sunrise", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = TimeFormatter.toDayHour(sunrise))
-        }
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            Image(
-                painter = painterResource(R.drawable.sunset),
-                contentDescription = "Sunset icon"
-            )
-            Text(text = "Sunset", style = TextStyle(fontWeight = FontWeight.Bold))
-            Text(text = TimeFormatter.toDayHour(sunset))
         }
     }
 }
