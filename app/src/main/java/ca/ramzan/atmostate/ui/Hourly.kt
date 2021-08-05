@@ -24,7 +24,6 @@ import ca.ramzan.atmostate.network.Hourly
 import ca.ramzan.atmostate.ui.theme.Lime200
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
-import java.util.*
 import kotlin.math.roundToInt
 
 @ExperimentalFoundationApi
@@ -96,8 +95,8 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                                         Modifier.wrapContentWidth(Alignment.End)
                                     )
                                 }
-                                rain?.let { HourRain(it.hour) }
-                                snow?.let { HourSnow(it.hour) }
+                                rain?.let { Rain(it.hour) }
+                                snow?.let { Snow(it.hour) }
                             }
                         }
                         AnimatedVisibility(expanded) {
@@ -136,43 +135,5 @@ fun ExpandedHour(forecast: String, windSpeed: Int, windGust: Int, windDirection:
                 Text(text = "Wind Gust")
             }
         }
-    }
-}
-
-@Composable
-fun HourRain(rain: Double) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Image(
-            painter = painterResource(R.drawable.rain_drop),
-            contentDescription = "Rain",
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        Text(text = "${"%.1f".format(rain)}mm")
-    }
-}
-
-@Composable
-fun HourSnow(snow: Double) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Image(
-            painter = painterResource(R.drawable.snow_flake),
-            contentDescription = "Rain",
-            modifier = Modifier.padding(end = 8.dp)
-        )
-        Text(text = "${"%.1f".format(snow)}mm")
-    }
-}
-
-fun String.capitalized(): String {
-    return this.replaceFirstChar {
-        if (it.isLowerCase()) it.titlecase(
-            Locale.getDefault()
-        ) else it.toString()
     }
 }

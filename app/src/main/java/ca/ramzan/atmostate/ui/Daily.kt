@@ -105,8 +105,8 @@ fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
                                         Modifier.wrapContentWidth(Alignment.End)
                                     )
                                 }
-                                rain?.let { HourRain(it) }
-                                snow?.let { HourSnow(it) }
+                                rain?.let { Rain(it) }
+                                snow?.let { Snow(it) }
                             }
                         }
                         AnimatedVisibility(expanded) {

@@ -16,10 +16,6 @@ import androidx.compose.ui.unit.dp
 import ca.ramzan.atmostate.network.Current
 import ca.ramzan.atmostate.network.Weather
 import coil.compose.rememberImagePainter
-import java.time.Instant
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
-import java.util.*
 import kotlin.math.roundToInt
 import com.ramzan.atmostate.R as AtmostateR
 
@@ -80,111 +76,6 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
 }
 
 @Composable
-fun GridColumn(content: @Composable () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.fillMaxHeight()
-    ) {
-        content()
-    }
-}
-
-@Composable
-fun Wind(speed: Int, gust: Int, direction: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(AtmostateR.drawable.wind),
-            contentDescription = "Wind"
-        )
-        Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(text = "${speed}km/h $direction")
-        Text(text = "${gust}km/h")
-    }
-}
-
-@Composable
-fun Cloudiness(clouds: Int) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(AtmostateR.drawable.cloud),
-            contentDescription = "Cloud"
-        )
-        Text(text = "Cloudiness", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(text = "$clouds%")
-    }
-}
-
-@Composable
-fun Visibility(visibility: Int) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(bottom = gridPadding)
-    ) {
-        Image(
-            painter = painterResource(AtmostateR.drawable.telescope),
-            contentDescription = "Telescope"
-        )
-        Text(text = "Visibility", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(text = "${visibility}km")
-    }
-}
-
-@Composable
-fun Pressure(pressure: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(bottom = gridPadding)
-    ) {
-        Image(
-            painter = painterResource(AtmostateR.drawable.barometer),
-            contentDescription = "Barometer"
-        )
-        Text(text = "Pressure", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(pressure)
-    }
-}
-
-@Composable
-fun Humidity(humidity: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(bottom = gridPadding)
-    ) {
-        Image(
-            painter = painterResource(AtmostateR.drawable.humidity),
-            contentDescription = "Humidity"
-        )
-        Text(text = "Humidity", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(humidity)
-    }
-}
-
-@Composable
-fun DewPoint(dewPoint: String) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(AtmostateR.drawable.dewpoint),
-            contentDescription = "Dew point"
-        )
-        Text(text = "Dew point", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(dewPoint)
-    }
-}
-
-@Composable
 fun Weather(weather: Weather, temp: Int, feelsLike: Int, uvi: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -199,18 +90,110 @@ fun Weather(weather: Weather, temp: Int, feelsLike: Int, uvi: Int) {
         Column {
             Text(text = "$temp°C", style = MaterialTheme.typography.h3)
             Text(text = "Feels like $feelsLike")
-            Text(weather.description.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() })
+            Text(weather.description.capitalized())
             Text("UV Index: $uvi")
         }
     }
 }
 
 @Composable
-fun Sunrise(sunrise: Long) {
+fun GridColumn(content: @Composable () -> Unit) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        modifier = Modifier.fillMaxHeight()
     ) {
+        content()
+    }
+}
+
+@Composable
+fun GridItem(padded: Boolean = false, content: @Composable () -> Unit) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(bottom = if (padded) gridPadding else 0.dp)
+    ) {
+        content()
+    }
+}
+
+@Composable
+fun Wind(speed: Int, gust: Int, direction: String) {
+    GridItem {
+        Image(
+            painter = painterResource(AtmostateR.drawable.wind),
+            contentDescription = "Wind"
+        )
+        Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(text = "${speed}km/h $direction")
+        Text(text = "${gust}km/h")
+    }
+}
+
+@Composable
+fun Cloudiness(clouds: Int) {
+    GridItem {
+        Image(
+            painter = painterResource(AtmostateR.drawable.cloud),
+            contentDescription = "Cloud"
+        )
+        Text(text = "Cloudiness", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(text = "$clouds%")
+    }
+}
+
+@Composable
+fun Visibility(visibility: Int) {
+    GridItem(padded = true) {
+        Image(
+            painter = painterResource(AtmostateR.drawable.telescope),
+            contentDescription = "Telescope"
+        )
+        Text(text = "Visibility", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(text = "${visibility}km")
+    }
+}
+
+@Composable
+fun Pressure(pressure: String) {
+    GridItem(padded = true) {
+        Image(
+            painter = painterResource(AtmostateR.drawable.barometer),
+            contentDescription = "Barometer"
+        )
+        Text(text = "Pressure", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(pressure)
+    }
+}
+
+@Composable
+fun Humidity(humidity: String) {
+    GridItem(padded = true) {
+        Image(
+            painter = painterResource(AtmostateR.drawable.humidity),
+            contentDescription = "Humidity"
+        )
+        Text(text = "Humidity", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(humidity)
+    }
+}
+
+@Composable
+fun DewPoint(dewPoint: String) {
+    GridItem {
+        Image(
+            painter = painterResource(AtmostateR.drawable.dewpoint),
+            contentDescription = "Dew point"
+        )
+        Text(text = "Dew point", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(dewPoint)
+    }
+}
+
+@Composable
+fun Sunrise(sunrise: Long) {
+    GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.sunrise),
             contentDescription = "Sunrise"
@@ -222,56 +205,12 @@ fun Sunrise(sunrise: Long) {
 
 @Composable
 fun Sunset(sunset: Long) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
+    GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.sunset),
             contentDescription = "Sunset"
         )
         Text(text = "Sunset", style = TextStyle(fontWeight = FontWeight.Light))
         Text(text = TimeFormatter.toDayHour(sunset))
-    }
-}
-
-object TimeFormatter {
-    private val dayHourFormatter =
-        DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault())
-    private val clockHourOfDayFormatter =
-        DateTimeFormatter.ofPattern("ha").withZone(ZoneId.systemDefault())
-    private val hourOfDayFormatter =
-        DateTimeFormatter.ofPattern("H").withZone(ZoneId.systemDefault())
-    private val weekDayFormatter =
-        DateTimeFormatter.ofPattern("EEEE").withZone(ZoneId.systemDefault())
-
-    fun toDayHour(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            dayHourFormatter.format(this)
-        }
-    }
-
-    fun toDate(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.systemDefault()).format(this)
-        }
-    }
-
-    fun toHourOfDay(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            clockHourOfDayFormatter.format(this)
-        }
-    }
-
-    fun isMidnight(time: Long): Boolean {
-        return Instant.ofEpochSecond(time).run {
-            hourOfDayFormatter.format(this) == "0"
-        }
-    }
-
-    fun toWeekDay(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            weekDayFormatter.format(this)
-        }
     }
 }
