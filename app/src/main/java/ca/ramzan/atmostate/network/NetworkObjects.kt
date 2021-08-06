@@ -31,6 +31,7 @@ data class Weather(
     val icon: String,
 )
 
+// dt properties are Unix seconds
 data class Current(
     val dt: Long,
     val sunrise: Long,

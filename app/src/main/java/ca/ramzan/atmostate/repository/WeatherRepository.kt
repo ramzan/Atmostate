@@ -6,7 +6,9 @@ import ca.ramzan.atmostate.ui.capitalized
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
 
@@ -21,12 +23,15 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
     private val lat = 43.5789
     private val lon = -79.6583
 
-    val currentForecast = db.getCurrentForecast()
-    val hourlyForecast = db.getHourlyForecast()
-    val dailyForecast = db.getDailyForecast()
+    val currentForecast =
+        db.getCurrentForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
+    val hourlyForecast =
+        db.getHourlyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
+    val dailyForecast =
+        db.getDailyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
     val alerts = db.getAlerts()
 
-    private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loading)
+    private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loaded)
     val refreshState: StateFlow<RefreshState> get() = _refreshState
 
     init {
@@ -36,6 +41,10 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
     }
 
     suspend fun getWeather() {
+        val lastRefresh = currentForecast.value?.date
+        if (lastRefresh == null || (System.currentTimeMillis() - lastRefresh * 1000 < 600000)) {
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             _refreshState.emit(RefreshState.Loading)
             api.getForecast(lat, lon).run {
@@ -43,6 +52,7 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
                     is WeatherResult.Failure -> _refreshState.emit(RefreshState.Error(this.error))
                     is WeatherResult.Success -> {
                         this.run {
+                            db.clearOldForecast()
                             saveCurrentForecast(current)
                             saveHourlyForecast(hourly)
                             saveDailyForecast(daily)

@@ -38,9 +38,9 @@ val tabTitles = listOf("Current", "Hourly", "Daily")
 @Composable
 fun AtmostateApp(vm: MainViewModel = viewModel()) {
     val refreshState = vm.state.collectAsState()
-    val currentForecast = vm.currentForecast.collectAsState(initial = null)
-    val hourlyForecast = vm.hourlyForecast.collectAsState(initial = emptyList())
-    val dailyForecast = vm.dailyForecast.collectAsState(initial = emptyList())
+    val currentForecast = vm.currentForecast.collectAsState()
+    val hourlyForecast = vm.hourlyForecast.collectAsState()
+    val dailyForecast = vm.dailyForecast.collectAsState()
     val currentListState = rememberLazyListState()
     val hourlyListState = rememberLazyListState()
     val dailyListState = rememberLazyListState()
