@@ -21,25 +21,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ca.ramzan.atmostate.network.Daily
+import ca.ramzan.atmostate.database.DbDaily
 import ca.ramzan.atmostate.ui.theme.Lime200
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
-import kotlin.math.roundToInt
 
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @Composable
-fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
+fun DailyForecast(listState: LazyListState, daily: List<DbDaily>) {
     LazyColumn(
         state = listState,
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
     ) {
-        dailyForecast.forEachIndexed { i, daily ->
+        if (daily.isEmpty()) {
+            item {
+                Text(text = "No data", modifier = Modifier.fillMaxSize())
+            }
+        }
+        daily.forEachIndexed { i, daily ->
             stickyHeader {
                 Text(
-                    text = TimeFormatter.toWeekDay(daily.dt),
+                    text = TimeFormatter.toWeekDay(daily.date),
                     modifier = Modifier
                         .fillMaxWidth()
                         .background(Lime200, RectangleShape)
@@ -64,7 +68,7 @@ fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
                         ) {
                             Column {
                                 Text(
-                                    text = weather.first().description.capitalized(),
+                                    text = description,
                                     fontWeight = FontWeight.SemiBold
                                 )
                                 Row(
@@ -72,17 +76,17 @@ fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Image(
-                                        painter = rememberImagePainter("https://openweathermap.org/img/wn/${weather.first().icon}@4x.png"),
+                                        painter = rememberImagePainter("https://openweathermap.org/img/wn/${icon}@4x.png"),
                                         contentDescription = "Forecast image",
                                         modifier = Modifier.size(48.dp)
                                     )
                                     Text(
-                                        text = "High: ${temp.max.roundToInt()}°C",
+                                        text = "High: ${tempMax}°C",
                                         fontSize = 18.sp,
                                         modifier = Modifier.padding(end = 16.dp)
                                     )
                                     Text(
-                                        text = "Low: ${temp.min.roundToInt()}°C",
+                                        text = "Low: ${tempMin}°C",
                                         fontSize = 18.sp
                                     )
                                 }
@@ -101,7 +105,7 @@ fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
                                         modifier = Modifier.padding(end = 8.dp)
                                     )
                                     Text(
-                                        "${(pop * 100).toInt()}%",
+                                        "${pop}%",
                                         Modifier.wrapContentWidth(Alignment.End)
                                     )
                                 }
@@ -122,7 +126,7 @@ fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Text(
-                                            text = "${(windSpeed * 3.6).roundToInt()} km/h ${
+                                            text = "$windSpeed km/h ${
                                                 degreeToDirection(windDeg)
                                             }"
                                         )
@@ -130,12 +134,12 @@ fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
                                     }
 
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(text = "${((windGust ?: 0.0) * 3.6).roundToInt()} km/h")
+                                        Text(text = "$windGust km/h")
                                         Text(text = "Wind Gust")
                                     }
 
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(text = "${humidity.roundToInt()}%")
+                                        Text(text = "${humidity}%")
                                         Text(text = "Humidity")
                                     }
                                 }
@@ -152,18 +156,16 @@ fun DailyForecast(listState: LazyListState, dailyForecast: List<Daily>) {
                                         Text(text = "Night: ", fontWeight = FontWeight.Bold)
                                     }
                                     Column {
-                                        Text(text = "${temp.morn.roundToInt()}°")
-                                        Text(text = "${temp.day.roundToInt()}°")
-                                        Text(text = "${temp.eve.roundToInt()}°")
-                                        Text(text = "${temp.night.roundToInt()}°")
+                                        Text(text = "${tempMorn}°")
+                                        Text(text = "${tempDay}°")
+                                        Text(text = "${tempEve}°")
+                                        Text(text = "${tempNight}°")
                                     }
-                                    feelsLike?.run {
-                                        Column {
-                                            Text(text = " Feels like ${morn.roundToInt()}")
-                                            Text(text = " Feels like ${day.roundToInt()}")
-                                            Text(text = " Feels like ${eve.roundToInt()}")
-                                            Text(text = " Feels like ${night.roundToInt()}")
-                                        }
+                                    Column {
+                                        Text(text = " Feels like $feelsLikeMorn")
+                                        Text(text = " Feels like $feelsLikeDay")
+                                        Text(text = " Feels like $feelsLikeEve")
+                                        Text(text = " Feels like $feelsLikeNight")
                                     }
                                 }
                             }

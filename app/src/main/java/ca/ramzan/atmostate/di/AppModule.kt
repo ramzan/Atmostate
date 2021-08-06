@@ -26,7 +26,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun moshi() = Moshi.Builder()
+    fun moshi(): Moshi = Moshi.Builder()
         .add(KotlinJsonAdapterFactory())
         .build()
 

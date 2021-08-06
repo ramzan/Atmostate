@@ -13,32 +13,36 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ca.ramzan.atmostate.network.Current
-import ca.ramzan.atmostate.network.Weather
+import ca.ramzan.atmostate.database.DbCurrent
 import coil.compose.rememberImagePainter
-import kotlin.math.roundToInt
 import com.ramzan.atmostate.R as AtmostateR
 
 private val gridPadding = 24.dp
 
 @Composable
-fun CurrentForecast(listState: LazyListState, current: Current) {
+fun CurrentForecast(listState: LazyListState, current: DbCurrent?) {
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxSize()
     ) {
+        if (current == null) {
+            item {
+                Text(text = "No data", modifier = Modifier.fillMaxSize())
+            }
+            return@LazyColumn
+        }
         current.run {
-            item { TimeUpdated(dt) }
+            item { TimeUpdated(date) }
             item {
                 Weather(
-                    weather.first(),
-                    temp.roundToInt(),
-                    feelsLike.roundToInt(),
-                    uvi.roundToInt()
+                    description,
+                    icon,
+                    temp,
+                    feelsLike,
+                    uvi
                 )
             }
             item {
@@ -48,25 +52,25 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
                 ) {
                     GridColumn {
                         Wind(
-                            (windSpeed * 3.6).roundToInt(),
-                            ((windGust ?: 0.0) * 3.6).roundToInt(),
+                            windSpeed,
+                            windGust,
                             degreeToDirection(windDeg)
                         )
-                        Cloudiness(clouds.toInt())
+                        Cloudiness(clouds)
                     }
                     GridColumn {
-                        Humidity("${humidity.roundToInt()}%")
+                        Humidity("${humidity}%")
                         Sunrise(sunrise)
 
                     }
                     GridColumn {
-                        Pressure("${"%.1f".format(pressure / 10)}kPa")
+                        Pressure("${"%.1f".format(pressure)}kPa")
                         Sunset(sunset)
 
                     }
                     GridColumn {
-                        Visibility((visibility / 1000).toInt())
-                        DewPoint("${dewPoint.roundToInt()}°C")
+                        Visibility(visibility)
+                        DewPoint("${dewPoint}°C")
                     }
 
                 }
@@ -76,21 +80,21 @@ fun CurrentForecast(listState: LazyListState, current: Current) {
 }
 
 @Composable
-fun Weather(weather: Weather, temp: Int, feelsLike: Int, uvi: Int) {
+fun Weather(description: String, icon: String, temp: Int, feelsLike: Int, uvi: Int) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = rememberImagePainter("https://openweathermap.org/img/wn/${weather.icon}@4x.png"),
+            painter = rememberImagePainter("https://openweathermap.org/img/wn/${icon}@4x.png"),
             contentDescription = "Forecast image",
             modifier = Modifier.size(128.dp)
         )
         Column {
             Text(text = "$temp°C", style = MaterialTheme.typography.h3)
             Text(text = "Feels like $feelsLike")
-            Text(weather.description.capitalized())
+            Text(description)
             Text("UV Index: $uvi")
         }
     }

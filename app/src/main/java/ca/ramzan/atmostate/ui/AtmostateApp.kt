@@ -15,26 +15,32 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ca.ramzan.atmostate.MainState
 import ca.ramzan.atmostate.MainViewModel
+import ca.ramzan.atmostate.repository.RefreshState
 import ca.ramzan.atmostate.ui.theme.AtmostateTheme
 import ca.ramzan.atmostate.ui.theme.Orange100
 import ca.ramzan.atmostate.ui.theme.Orange500
 import com.google.accompanist.pager.*
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
 
 val tabTitles = listOf("Current", "Hourly", "Daily")
 
+@ExperimentalCoroutinesApi
 @ExperimentalAnimationApi
 @ExperimentalFoundationApi
 @ExperimentalPagerApi
 @Composable
 fun AtmostateApp(vm: MainViewModel = viewModel()) {
-    val state = vm.state.collectAsState()
+    val refreshState = vm.state.collectAsState()
+    val currentForecast = vm.currentForecast.collectAsState(initial = null)
+    val hourlyForecast = vm.hourlyForecast.collectAsState(initial = emptyList())
+    val dailyForecast = vm.dailyForecast.collectAsState(initial = emptyList())
     val currentListState = rememberLazyListState()
     val hourlyListState = rememberLazyListState()
     val dailyListState = rememberLazyListState()
@@ -45,20 +51,17 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
             topBar = { MainAppBar(pagerState) },
             drawerContent = { Text(text = "drawerContent") },
             content = {
-                when (val s = state.value) {
-                    is MainState.Error -> CenteredItem {
-                        Text(text = s.error, textAlign = TextAlign.Center)
-                    }
-                    is MainState.Loaded -> {
-                        HorizontalPager(state = pagerState) { page ->
-                            when (page) {
-                                0 -> CurrentForecast(currentListState, s.data.current)
-                                1 -> HourlyForecast(hourlyListState, s.data.hourly)
-                                2 -> DailyForecast(dailyListState, s.data.daily)
-                            }
+                HorizontalPager(state = pagerState) { page ->
+                    SwipeRefresh(
+                        state = rememberSwipeRefreshState(refreshState.value == RefreshState.Loading),
+                        onRefresh = { vm.refresh() }
+                    ) {
+                        when (page) {
+                            0 -> CurrentForecast(currentListState, currentForecast.value)
+                            1 -> HourlyForecast(hourlyListState, hourlyForecast.value)
+                            2 -> DailyForecast(dailyListState, dailyForecast.value)
                         }
                     }
-                    is MainState.Loading -> CenteredItem { CircularProgressIndicator() }
                 }
             },
             backgroundColor = Orange100,
@@ -110,6 +113,7 @@ fun CenteredItem(content: @Composable () -> Unit) {
     ) { content() }
 }
 
+@ExperimentalCoroutinesApi
 @ExperimentalFoundationApi
 @ExperimentalAnimationApi
 @ExperimentalPagerApi

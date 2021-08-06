@@ -20,28 +20,32 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ca.ramzan.atmostate.network.Hourly
+import ca.ramzan.atmostate.database.DbHourly
 import ca.ramzan.atmostate.ui.theme.Lime200
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
-import kotlin.math.roundToInt
 
 @ExperimentalFoundationApi
 @ExperimentalAnimationApi
 @Composable
-fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
+fun HourlyForecast(listState: LazyListState, hourly: List<DbHourly>) {
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
-            .fillMaxWidth()
+            .fillMaxSize()
     ) {
+        if (hourly.isEmpty()) {
+            item {
+                Text(text = "No data", modifier = Modifier.fillMaxSize())
+            }
+        }
         hourly.forEachIndexed { i, hour ->
             hour.run {
-                if (TimeFormatter.isMidnight(hour.dt)) {
+                if (TimeFormatter.isMidnight(hour.date)) {
                     stickyHeader {
                         Text(
-                            text = TimeFormatter.toWeekDay(hour.dt),
+                            text = TimeFormatter.toWeekDay(hour.date),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(Lime200, RectangleShape)
@@ -65,17 +69,17 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text(TimeFormatter.toHourOfDay(dt))
+                            Text(TimeFormatter.toHourOfDay(date))
                             Column {
                                 Row(verticalAlignment = Alignment.Bottom) {
                                     Image(
-                                        painter = rememberImagePainter("https://openweathermap.org/img/wn/${weather.first().icon}@4x.png"),
+                                        painter = rememberImagePainter("https://openweathermap.org/img/wn/${icon}@4x.png"),
                                         contentDescription = "Forecast image",
                                         modifier = Modifier.size(48.dp)
                                     )
-                                    Text("${temp.roundToInt()}°", fontSize = 32.sp)
+                                    Text("${temp}°", fontSize = 32.sp)
                                 }
-                                Text("Feels like ${feelsLike.roundToInt()}")
+                                Text("Feels like $feelsLike")
                             }
 
                             Column(
@@ -91,19 +95,19 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                                         modifier = Modifier.padding(end = 8.dp)
                                     )
                                     Text(
-                                        "${pop.roundToInt()}%",
+                                        "${pop}%",
                                         Modifier.wrapContentWidth(Alignment.End)
                                     )
                                 }
-                                rain?.let { Rain(it.hour) }
-                                snow?.let { Snow(it.hour) }
+                                rain?.let { Rain(it) }
+                                snow?.let { Snow(it) }
                             }
                         }
                         AnimatedVisibility(expanded) {
                             ExpandedHour(
-                                weather.first().description.capitalized(),
-                                (windSpeed * 3.6).roundToInt(),
-                                ((windGust ?: 0.0) * 3.6).roundToInt(),
+                                description,
+                                windSpeed,
+                                windGust,
                                 degreeToDirection(windDeg)
                             )
                         }
