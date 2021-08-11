@@ -2,10 +2,10 @@ package ca.ramzan.atmostate.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -13,10 +13,8 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ca.ramzan.atmostate.MainViewModel
 import ca.ramzan.atmostate.repository.RefreshState
@@ -49,17 +47,28 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
     AtmostateTheme {
         Scaffold(
             topBar = { MainAppBar(pagerState) },
-            drawerContent = { Text(text = "drawerContent") },
+            drawerContent = {
+                LazyColumn {
+                    item {
+                        Text(text = "Toronto", modifier = Modifier.clickable { })
+                    }
+                    item {
+                        Text(text = "Sydney")
+                    }
+                }
+            },
             content = {
                 HorizontalPager(state = pagerState) { page ->
                     SwipeRefresh(
                         state = rememberSwipeRefreshState(refreshState.value == RefreshState.Loading),
                         onRefresh = { vm.refresh() }
                     ) {
-                        when (page) {
-                            0 -> CurrentForecast(currentListState, currentForecast.value)
-                            1 -> HourlyForecast(hourlyListState, hourlyForecast.value)
-                            2 -> DailyForecast(dailyListState, dailyForecast.value)
+                        Box {
+                            when (page) {
+                                0 -> CurrentForecast(currentListState, currentForecast.value)
+                                1 -> HourlyForecast(hourlyListState, hourlyForecast.value)
+                                2 -> DailyForecast(dailyListState, dailyForecast.value)
+                            }
                         }
                     }
                 }
@@ -100,17 +109,6 @@ fun MainAppBar(pagerState: PagerState) {
             }
         }
     }
-}
-
-@Composable
-fun CenteredItem(content: @Composable () -> Unit) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
-    ) { content() }
 }
 
 @ExperimentalCoroutinesApi

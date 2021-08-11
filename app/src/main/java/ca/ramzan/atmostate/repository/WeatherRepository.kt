@@ -1,6 +1,8 @@
 package ca.ramzan.atmostate.repository
 
-import ca.ramzan.atmostate.database.*
+import android.util.Log
+import ca.ramzan.atmostate.database.cities.CityDatabaseDao
+import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
 import ca.ramzan.atmostate.ui.capitalized
 import kotlinx.coroutines.CoroutineScope
@@ -18,18 +20,22 @@ sealed class RefreshState {
     data class Error(val error: String) : RefreshState()
 }
 
-class WeatherRepository(private val db: WeatherDatabaseDao, private val api: WeatherApi) {
+class WeatherRepository(
+    private val weatherDb: WeatherDatabaseDao,
+    private val cityDb: CityDatabaseDao,
+    private val api: WeatherApi
+) {
 
-    private val lat = 43.5789
+    private val lat = 48.5789
     private val lon = -79.6583
 
     val currentForecast =
-        db.getCurrentForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
+        weatherDb.getCurrentForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
     val hourlyForecast =
-        db.getHourlyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
+        weatherDb.getHourlyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
     val dailyForecast =
-        db.getDailyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
-    val alerts = db.getAlerts()
+        weatherDb.getDailyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
+    val alerts = weatherDb.getAlerts()
 
     private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loaded)
     val refreshState: StateFlow<RefreshState> get() = _refreshState
@@ -42,17 +48,24 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
 
     suspend fun getWeather() {
         val lastRefresh = currentForecast.value?.date
-        if (lastRefresh == null || (System.currentTimeMillis() - lastRefresh * 1000 < 600000)) {
+        if (lastRefresh != null && (System.currentTimeMillis() - lastRefresh * 1000 < 600000)) {
+            Log.d("getWeather", "Skip refresh")
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
             _refreshState.emit(RefreshState.Loading)
+            Log.d("getWeather", "Refreshing")
             api.getForecast(lat, lon).run {
                 when (this) {
-                    is WeatherResult.Failure -> _refreshState.emit(RefreshState.Error(this.error))
+                    is WeatherResult.Failure -> {
+                        Log.d("getWeather", "Fail")
+                        Log.d("getWeather", error)
+                        _refreshState.emit(RefreshState.Error(this.error))
+                    }
                     is WeatherResult.Success -> {
+                        Log.d("getWeather", "Success")
                         this.run {
-                            db.clearOldForecast()
+                            weatherDb.clearOldForecast()
                             saveCurrentForecast(current)
                             saveHourlyForecast(hourly)
                             saveDailyForecast(daily)
@@ -67,7 +80,7 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
 
     private suspend fun saveCurrentForecast(current: Current) {
         current.run {
-            db.insertCurrent(
+            weatherDb.insertCurrent(
                 DbCurrent(
                     date = dt,
                     sunrise = sunrise,
@@ -108,7 +121,7 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
                 )
             }
         }.also {
-            db.insertHourly(it)
+            weatherDb.insertHourly(it)
         }
     }
 
@@ -139,7 +152,7 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
                 )
             }
         }.also {
-            db.insertDaily(it)
+            weatherDb.insertDaily(it)
         }
     }
 
@@ -156,7 +169,7 @@ class WeatherRepository(private val db: WeatherDatabaseDao, private val api: Wea
                 )
             }
         }.also {
-            db.insertAlerts(it)
+            weatherDb.insertAlerts(it)
         }
     }
 }

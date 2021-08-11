@@ -13,7 +13,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ca.ramzan.atmostate.database.DbCurrent
+import ca.ramzan.atmostate.database.weather.DbCurrent
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R as AtmostateR
 
