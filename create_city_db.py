@@ -16,8 +16,8 @@ LAT = "lat"
 LON = "lon"
 COORD = "coord"
 
-#url = 'https://bulk.openweathermap.org/sample/city.list.min.json.gz'
-#urllib.request.urlretrieve(url, f'{getcwd()}/city.list.min.json.gz')
+url = 'https://bulk.openweathermap.org/sample/city.list.min.json.gz'
+urllib.request.urlretrieve(url, f'{getcwd()}/city.list.min.json.gz')
 
 con = sqlite3.connect('cities.db')
 cur = con.cursor()
