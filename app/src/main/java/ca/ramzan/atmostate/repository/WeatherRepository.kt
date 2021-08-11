@@ -2,6 +2,7 @@ package ca.ramzan.atmostate.repository
 
 import android.util.Log
 import ca.ramzan.atmostate.database.cities.CityDatabaseDao
+import ca.ramzan.atmostate.database.cities.CityDisplay
 import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
 import ca.ramzan.atmostate.ui.capitalized
@@ -10,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlin.math.roundToInt
@@ -36,6 +38,12 @@ class WeatherRepository(
     val dailyForecast =
         weatherDb.getDailyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
     val alerts = weatherDb.getAlerts()
+
+    val cities = cityDb.getFullCities().map { cityNames ->
+        cityNames.map { c ->
+            CityDisplay(c.id, "${c.city}${c.state?.let { ", $it" }}${c.country?.let { ", $it" }}")
+        }
+    }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
 
     private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loaded)
     val refreshState: StateFlow<RefreshState> get() = _refreshState

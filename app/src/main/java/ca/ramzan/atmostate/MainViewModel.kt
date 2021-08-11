@@ -19,6 +19,7 @@ class MainViewModel @Inject constructor(
         }
     }
 
+    val cities = repo.cities
     val state = repo.refreshState
 
     val currentForecast = repo.currentForecast

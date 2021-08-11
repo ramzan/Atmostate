@@ -5,6 +5,18 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
+data class CityName(
+    val id: Long,
+    val city: String,
+    val state: String?,
+    val country: String?
+)
+
+data class CityDisplay(
+    val id: Long,
+    val name: String
+)
+
 @Entity(
     tableName = "cities",
     foreignKeys = [

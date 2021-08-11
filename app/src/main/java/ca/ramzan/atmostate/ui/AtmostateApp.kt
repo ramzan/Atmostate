@@ -2,9 +2,9 @@ package ca.ramzan.atmostate.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
@@ -39,6 +39,7 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
     val currentForecast = vm.currentForecast.collectAsState()
     val hourlyForecast = vm.hourlyForecast.collectAsState()
     val dailyForecast = vm.dailyForecast.collectAsState()
+    val cities = vm.cities.collectAsState()
     val currentListState = rememberLazyListState()
     val hourlyListState = rememberLazyListState()
     val dailyListState = rememberLazyListState()
@@ -48,12 +49,15 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
         Scaffold(
             topBar = { MainAppBar(pagerState) },
             drawerContent = {
-                LazyColumn {
-                    item {
-                        Text(text = "Toronto", modifier = Modifier.clickable { })
-                    }
-                    item {
-                        Text(text = "Sydney")
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    cities.value.forEach { city ->
+                        item {
+                            Text(
+                                text = city.name, modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             },
