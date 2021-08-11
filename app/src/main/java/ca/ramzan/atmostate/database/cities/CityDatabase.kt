@@ -12,7 +12,8 @@ const val CITY_DB_VERSION = 1
     entities = [
         City::class,
         State::class,
-        Country::class
+        Country::class,
+        SavedCity::class
     ],
     version = CITY_DB_VERSION,
     exportSchema = false

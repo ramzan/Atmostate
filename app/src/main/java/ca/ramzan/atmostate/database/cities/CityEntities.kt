@@ -18,6 +18,21 @@ data class CityDisplay(
 )
 
 @Entity(
+    tableName = "saved_cities",
+    foreignKeys = [
+        ForeignKey(
+            entity = City::class,
+            parentColumns = ["id"],
+            childColumns = ["id"],
+        )
+    ],
+)
+data class SavedCity(
+    @PrimaryKey
+    val id: Long
+)
+
+@Entity(
     tableName = "cities",
     foreignKeys = [
         ForeignKey(

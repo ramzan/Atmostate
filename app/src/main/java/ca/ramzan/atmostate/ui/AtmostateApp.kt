@@ -2,6 +2,7 @@ package ca.ramzan.atmostate.ui
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -58,6 +59,14 @@ fun AtmostateApp(vm: MainViewModel = viewModel()) {
                                 text = city.name, modifier = Modifier.fillMaxWidth()
                             )
                         }
+                    }
+                    item {
+                        Text(
+                            text = "+ Add location",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { vm.addCity() }
+                        )
                     }
                 }
             },
