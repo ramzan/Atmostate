@@ -1,5 +1,6 @@
 package ca.ramzan.atmostate.ui.city_select
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -17,11 +18,13 @@ import ca.ramzan.atmostate.ui.theme.Orange500
 @Composable
 fun CitySelect(
     vm: CitySelectViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
-    val cities = vm.allCities.collectAsState()
+    val cities = vm.filteredCities.collectAsState()
+    val query = vm.query.collectAsState()
+
     Scaffold(
-        topBar = { CitySelectAppBar(navController::navigateUp) },
+        topBar = { CitySelectAppBar(navController::navigateUp, query.value, vm::setQuery) },
         content = {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -34,7 +37,9 @@ fun CitySelect(
                 ) { city ->
                     Text(
                         text = city.name,
-                        modifier = Modifier.fillMaxWidth()
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { vm.addCity(city.id) }
                     )
                 }
             }
@@ -44,10 +49,23 @@ fun CitySelect(
 }
 
 @Composable
-fun CitySelectAppBar(onBackPress: () -> Boolean) {
+fun CitySelectAppBar(
+    onBackPress: () -> Boolean,
+    query: String,
+    setQuery: (String) -> Unit
+) {
     Column {
         TopAppBar(
-            title = { Text("City Select") },
+            title = {
+                OutlinedTextField(
+                    value = query,
+                    onValueChange = setQuery,
+                    modifier = Modifier.fillMaxWidth(),
+                    placeholder = {
+                        Text(text = "Search for a location")
+                    }
+                )
+            },
             backgroundColor = Orange500,
             navigationIcon = {
                 IconButton(onClick = { onBackPress() }) {

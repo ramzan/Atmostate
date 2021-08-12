@@ -19,12 +19,6 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
-    fun addCity() {
-        viewModelScope.launch {
-            repo.addCity(id = 833)
-        }
-    }
-
     val cities = repo.savedCities
     val state = repo.refreshState
 
