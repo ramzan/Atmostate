@@ -6,7 +6,7 @@ import ca.ramzan.atmostate.database.cities.CityDisplay
 import ca.ramzan.atmostate.database.cities.SavedCity
 import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
-import ca.ramzan.atmostate.ui.capitalized
+import ca.ramzan.atmostate.ui.forecast.capitalized
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow

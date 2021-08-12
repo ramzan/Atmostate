@@ -1,4 +1,4 @@
-package ca.ramzan.atmostate.ui
+package ca.ramzan.atmostate.ui.forecast
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi

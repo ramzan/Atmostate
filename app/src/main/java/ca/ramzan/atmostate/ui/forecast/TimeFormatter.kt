@@ -1,4 +1,4 @@
-package ca.ramzan.atmostate.ui
+package ca.ramzan.atmostate.ui.forecast
 
 import java.time.Instant
 import java.time.ZoneId

@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 @ExperimentalCoroutinesApi
 @HiltViewModel
-class MainViewModel @Inject constructor(
+class ForecastViewModel @Inject constructor(
     private val repo: WeatherRepository
 ) : ViewModel() {
     fun refresh() {
