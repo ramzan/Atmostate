@@ -1,9 +1,8 @@
 package ca.ramzan.atmostate.di
 
 import android.app.Application
-import ca.ramzan.atmostate.database.cities.CityDatabase
+import ca.ramzan.atmostate.database.AtmostateDatabase
 import ca.ramzan.atmostate.database.cities.CityDatabaseDao
-import ca.ramzan.atmostate.database.weather.WeatherDatabase
 import ca.ramzan.atmostate.database.weather.WeatherDatabaseDao
 import ca.ramzan.atmostate.network.WeatherApi
 import ca.ramzan.atmostate.repository.WeatherRepository
@@ -21,19 +20,16 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun cityDatabase(app: Application) = CityDatabase.getInstance(app)
+    fun atmostateDatabase(app: Application) = AtmostateDatabase.getInstance(app)
+
 
     @Provides
     @Singleton
-    fun cityDao(db: CityDatabase) = db.cityDatabaseDao
+    fun cityDao(db: AtmostateDatabase) = db.cityDatabaseDao
 
     @Provides
     @Singleton
-    fun weatherDatabase(app: Application) = WeatherDatabase.getInstance(app)
-
-    @Provides
-    @Singleton
-    fun weatherDao(db: WeatherDatabase) = db.weatherDatabaseDao
+    fun weatherDao(db: AtmostateDatabase) = db.weatherDatabaseDao
 
     @Provides
     @Singleton

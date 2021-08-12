@@ -6,6 +6,7 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "current_table")
 data class DbCurrent(
     @PrimaryKey
+    val cityId: Long,
     val date: Long,
     val sunrise: Long,
     val sunset: Long,
@@ -24,9 +25,9 @@ data class DbCurrent(
     val description: String
 )
 
-@Entity(tableName = "hourly_table")
+@Entity(tableName = "hourly_table", primaryKeys = ["cityId", "date"])
 data class DbHourly(
-    @PrimaryKey
+    val cityId: Long,
     val date: Long,
     val temp: Int,
     val feelsLike: Int,
@@ -40,9 +41,9 @@ data class DbHourly(
     val description: String
 )
 
-@Entity(tableName = "daily_table")
+@Entity(tableName = "daily_table", primaryKeys = ["cityId", "date"])
 data class DbDaily(
-    @PrimaryKey
+    val cityId: Long,
     val date: Long,
     val tempMin: Int,
     val tempMax: Int,
@@ -65,10 +66,10 @@ data class DbDaily(
     val description: String
 )
 
-@Entity(tableName = "alert_table")
+@Entity(tableName = "alert_table", primaryKeys = ["cityId", "alertId"])
 data class DbAlert(
-    @PrimaryKey(autoGenerate = true)
-    val id: Long = 0,
+    val cityId: Long,
+    val alertId: Long,
     val senderName: String,
     val event: String,
     val start: Long,

@@ -1,39 +1,47 @@
-package ca.ramzan.atmostate.database.cities
+package ca.ramzan.atmostate.database
 
 import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import ca.ramzan.atmostate.database.cities.*
+import ca.ramzan.atmostate.database.weather.*
 
-const val CITY_DB_NAME = "city_database"
-const val CITY_DB_VERSION = 1
+
+const val DB_NAME = "atmostate_database"
+const val DB_VERSION = 1
 
 @Database(
     entities = [
+        DbCurrent::class,
+        DbHourly::class,
+        DbDaily::class,
+        DbAlert::class,
         City::class,
         State::class,
         Country::class,
         SavedCity::class
     ],
-    version = CITY_DB_VERSION,
+    version = DB_VERSION,
     exportSchema = false
 )
-abstract class CityDatabase : RoomDatabase() {
+abstract class AtmostateDatabase : RoomDatabase() {
 
+    abstract val weatherDatabaseDao: WeatherDatabaseDao
     abstract val cityDatabaseDao: CityDatabaseDao
 
     companion object {
         @Volatile
-        private var INSTANCE: CityDatabase? = null
+        private var INSTANCE: AtmostateDatabase? = null
 
-        fun getInstance(context: Context): CityDatabase {
+        fun getInstance(context: Context): AtmostateDatabase {
             synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(
                         context.applicationContext,
-                        CityDatabase::class.java,
-                        CITY_DB_NAME
+                        AtmostateDatabase::class.java,
+                        DB_NAME
                     )
                         .createFromAsset("cities.db")
                         .fallbackToDestructiveMigration()

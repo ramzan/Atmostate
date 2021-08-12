@@ -3,9 +3,7 @@ package ca.ramzan.atmostate.ui.forecast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
@@ -15,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ca.ramzan.atmostate.ForecastViewModel
 import ca.ramzan.atmostate.repository.RefreshState
@@ -50,17 +49,23 @@ fun Forecast(
     val hourlyForecast = vm.hourlyForecast.collectAsState()
     val dailyForecast = vm.dailyForecast.collectAsState()
     val cities = vm.cities.collectAsState()
+    val currentCityName = vm.currentCityname.collectAsState("")
 
     Scaffold(
-        topBar = { ForecastAppBar(pagerState) },
+        topBar = { ForecastAppBar(pagerState, currentCityName.value) },
         drawerContent = {
             LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 cities.value.forEach { city ->
                     item {
                         Text(
-                            text = city.name, modifier = Modifier.fillMaxWidth()
+                            text = city.name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable { vm.setCurrentCity(city.id) }
+                                .padding(horizontal = 16.dp)
                         )
                     }
                 }
@@ -96,11 +101,11 @@ fun Forecast(
 
 @ExperimentalPagerApi
 @Composable
-fun ForecastAppBar(pagerState: PagerState) {
+fun ForecastAppBar(pagerState: PagerState, currentCityName: String) {
     val scope = rememberCoroutineScope()
     Column {
         TopAppBar(
-            title = { Text("TopAppBar") },
+            title = { Text(currentCityName) },
             backgroundColor = Orange500,
             navigationIcon = {
                 IconButton(onClick = {}) {

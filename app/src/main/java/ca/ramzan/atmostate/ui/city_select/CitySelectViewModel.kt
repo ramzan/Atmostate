@@ -1,5 +1,6 @@
 package ca.ramzan.atmostate.ui.city_select
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ca.ramzan.atmostate.repository.WeatherRepository
@@ -36,6 +37,7 @@ class CitySelectViewModel @Inject constructor(
     }.stateIn(CoroutineScope(Dispatchers.IO), SharingStarted.Eagerly, emptyList())
 
     fun addCity(id: Long) {
+        Log.d("zoop adding id", id.toString())
         repo.addCity(id)
     }
 }

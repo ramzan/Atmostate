@@ -5,6 +5,11 @@ import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
 
+data class Coord(
+    val lat: Double,
+    val lon: Double
+)
+
 data class CityName(
     val id: Long,
     val city: String,
@@ -29,7 +34,8 @@ data class CityDisplay(
 )
 data class SavedCity(
     @PrimaryKey
-    val id: Long
+    val id: Long,
+    val selected: Boolean = true
 )
 
 @Entity(

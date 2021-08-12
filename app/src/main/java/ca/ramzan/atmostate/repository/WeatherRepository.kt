@@ -30,9 +30,6 @@ class WeatherRepository(
     private val api: WeatherApi
 ) {
 
-    private val lat = 48.5789
-    private val lon = -79.6583
-
     val currentForecast =
         weatherDb.getCurrentForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
     val hourlyForecast =
@@ -42,12 +39,15 @@ class WeatherRepository(
     val alerts = weatherDb.getAlerts()
 
     val allCities = cityDb.getAllCities().map { cityNames ->
-        cityNames.map { it.toCityDisplay()}
+        cityNames.map { it.toCityDisplay() }
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
 
     val savedCities = cityDb.getSavedCities().map { cityNames ->
         cityNames.map { it.toCityDisplay() }
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
+
+    val currentCity =
+        cityDb.getSelectedCityFlow().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
 
 
     private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loaded)
@@ -55,19 +55,26 @@ class WeatherRepository(
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
-            getWeather()
+            cityDb.getSavedCityIds().forEach { getWeather(it) }
         }
     }
 
-    suspend fun getWeather() {
-        val lastRefresh = currentForecast.value?.date
-        if (lastRefresh != null && (System.currentTimeMillis() - lastRefresh * 1000 < 600000)) {
-            Log.d("getWeather", "Skip refresh")
-            return
+    suspend fun refreshSelectedCity() {
+        currentCity.value?.run {
+            getWeather(id)
         }
+    }
+
+    private suspend fun getWeather(cityId: Long) {
         CoroutineScope(Dispatchers.IO).launch {
+            val lastRefresh = weatherDb.lastUpdated(cityId)
+            if (lastRefresh != null && (System.currentTimeMillis() - lastRefresh * 1000 < 600000)) {
+                Log.d("getWeather", "Skip refresh")
+                return@launch
+            }
             _refreshState.emit(RefreshState.Loading)
             Log.d("getWeather", "Refreshing")
+            val (lat, lon) = cityDb.getCoordinates(cityId)
             api.getForecast(lat, lon).run {
                 when (this) {
                     is WeatherResult.Failure -> {
@@ -78,11 +85,13 @@ class WeatherRepository(
                     is WeatherResult.Success -> {
                         Log.d("getWeather", "Success")
                         this.run {
-                            weatherDb.clearOldForecast()
-                            saveCurrentForecast(current)
-                            saveHourlyForecast(hourly)
-                            saveDailyForecast(daily)
-                            saveAlerts(alerts)
+                            weatherDb.saveForecast(
+                                cityId,
+                                currentToEntity(cityId, current),
+                                hourlyToEntity(cityId, hourly),
+                                dailyToEntity(cityId, daily),
+                                alertsToEntity(cityId, alerts)
+                            )
                             _refreshState.emit(RefreshState.Loaded)
                         }
                     }
@@ -91,35 +100,35 @@ class WeatherRepository(
         }
     }
 
-    private suspend fun saveCurrentForecast(current: Current) {
-        current.run {
-            weatherDb.insertCurrent(
-                DbCurrent(
-                    date = dt,
-                    sunrise = sunrise,
-                    sunset = sunset,
-                    temp = temp.roundToInt(),
-                    feelsLike = feelsLike.roundToInt(),
-                    pressure = pressure / 10,
-                    humidity = humidity.roundToInt(),
-                    dewPoint = dewPoint.roundToInt(),
-                    clouds = clouds.roundToInt(),
-                    uvi = uvi.roundToInt(),
-                    visibility = (visibility / 1000).roundToInt(),
-                    windSpeed = (windSpeed * 3.6).roundToInt(),
-                    windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
-                    windDeg = windDeg,
-                    icon = weather.first().icon,
-                    description = weather.first().description.capitalized(),
-                )
+    private fun currentToEntity(cityId: Long, current: Current): DbCurrent {
+        return current.run {
+            DbCurrent(
+                cityId = cityId,
+                date = dt,
+                sunrise = sunrise,
+                sunset = sunset,
+                temp = temp.roundToInt(),
+                feelsLike = feelsLike.roundToInt(),
+                pressure = pressure / 10,
+                humidity = humidity.roundToInt(),
+                dewPoint = dewPoint.roundToInt(),
+                clouds = clouds.roundToInt(),
+                uvi = uvi.roundToInt(),
+                visibility = (visibility / 1000).roundToInt(),
+                windSpeed = (windSpeed * 3.6).roundToInt(),
+                windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
+                windDeg = windDeg,
+                icon = weather.first().icon,
+                description = weather.first().description.capitalized(),
             )
         }
     }
 
-    private suspend fun saveHourlyForecast(hourlies: List<Hourly>) {
-        hourlies.map { hourly ->
+    private fun hourlyToEntity(cityId: Long, hourlies: List<Hourly>): List<DbHourly> {
+        return hourlies.map { hourly ->
             hourly.run {
                 DbHourly(
+                    cityId = cityId,
                     date = dt,
                     temp = temp.roundToInt(),
                     feelsLike = feelsLike.roundToInt(),
@@ -133,15 +142,14 @@ class WeatherRepository(
                     description = weather.first().description.capitalized(),
                 )
             }
-        }.also {
-            weatherDb.insertHourly(it)
         }
     }
 
-    private suspend fun saveDailyForecast(dailies: List<Daily>) {
-        dailies.map { daily ->
+    private fun dailyToEntity(cityId: Long, dailies: List<Daily>): List<DbDaily> {
+        return dailies.map { daily ->
             daily.run {
                 DbDaily(
+                    cityId = cityId,
                     date = dt,
                     tempMin = temp.min.roundToInt(),
                     tempMax = temp.max.roundToInt(),
@@ -164,16 +172,15 @@ class WeatherRepository(
                     description = weather.first().description.capitalized(),
                 )
             }
-        }.also {
-            weatherDb.insertDaily(it)
         }
     }
 
-    private suspend fun saveAlerts(alerts: List<Alert>?) {
-        if (alerts == null) return
-        alerts.map { alert ->
+    private fun alertsToEntity(cityId: Long, alerts: List<Alert>?): List<DbAlert> {
+        return alerts?.mapIndexed { i, alert ->
             alert.run {
                 DbAlert(
+                    cityId = cityId,
+                    alertId = i.toLong(),
                     senderName = senderName,
                     event = event,
                     start = start,
@@ -181,14 +188,19 @@ class WeatherRepository(
                     description = description,
                 )
             }
-        }.also {
-            weatherDb.insertAlerts(it)
-        }
+        } ?: emptyList()
     }
 
     fun addCity(id: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-            cityDb.saveCity(SavedCity(id))
+            cityDb.selectCity(SavedCity(id))
+            getWeather(id)
+        }
+    }
+
+    fun setCurrentCity(cityId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            cityDb.selectCity(cityDb.getCity(cityId))
         }
     }
 }
