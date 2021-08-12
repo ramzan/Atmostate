@@ -8,9 +8,11 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import ca.ramzan.atmostate.ui.AtmostateApp
 import com.google.accompanist.pager.ExperimentalPagerApi
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @ExperimentalCoroutinesApi
     @ExperimentalFoundationApi
     @ExperimentalAnimationApi
     @ExperimentalPagerApi

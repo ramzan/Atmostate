@@ -4,6 +4,7 @@ buildscript {
         compose_version = '1.0.1'
         room_version = "2.3.0"
         hilt_version = '2.38.1'
+        accompanist_version = '0.16.1'
     }
     repositories {
         google()
