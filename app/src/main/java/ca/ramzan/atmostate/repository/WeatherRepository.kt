@@ -3,6 +3,7 @@ package ca.ramzan.atmostate.repository
 import android.util.Log
 import ca.ramzan.atmostate.database.cities.CityDatabaseDao
 import ca.ramzan.atmostate.database.cities.CityDisplay
+import ca.ramzan.atmostate.database.cities.CityName
 import ca.ramzan.atmostate.database.cities.SavedCity
 import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
@@ -41,15 +42,11 @@ class WeatherRepository(
     val alerts = weatherDb.getAlerts()
 
     val allCities = cityDb.getAllCities().map { cityNames ->
-        cityNames.map { c ->
-            CityDisplay(c.id, "${c.city}${c.state?.let { ", $it" }}${c.country?.let { ", $it" }}")
-        }
+        cityNames.map { it.toCityDisplay()}
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
 
     val savedCities = cityDb.getSavedCities().map { cityNames ->
-        cityNames.map { c ->
-            CityDisplay(c.id, "${c.city}${c.state?.let { ", $it" }}${c.country?.let { ", $it" }}")
-        }
+        cityNames.map { it.toCityDisplay() }
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
 
 
@@ -194,4 +191,10 @@ class WeatherRepository(
             cityDb.saveCity(SavedCity(id))
         }
     }
+}
+
+private fun CityName.toCityDisplay(): CityDisplay {
+    return CityDisplay(
+        id,
+        "${city}${state?.let { ", $it" } ?: ""}${country?.let { ", $it" } ?: ""}")
 }

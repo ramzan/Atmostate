@@ -9,21 +9,12 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface CityDatabaseDao {
 
-    @Query("SELECT * FROM countries")
-    suspend fun getCountries(): List<Country>
-
-    @Query("SELECT * FROM states")
-    suspend fun getStates(): List<State>
-
-    @Query("SELECT * FROM cities")
-    suspend fun getCities(): List<City>
-
     @Query(
         """
         SELECT cities.id, cities.name AS city, states.name AS state, countries.name AS country
         FROM cities
         LEFT JOIN states ON cities.stateId == states.id
-        INNER JOIN countries ON cities.countryId == countries.id
+        LEFT JOIN countries ON cities.countryId == countries.id
     """
     )
     fun getAllCities(): Flow<List<CityName>>
