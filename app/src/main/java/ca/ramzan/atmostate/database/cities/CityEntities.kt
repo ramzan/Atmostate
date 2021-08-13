@@ -4,35 +4,20 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-
-data class Coord(
-    val lat: Double,
-    val lon: Double
-)
-
-data class CityName(
-    val id: Long,
-    val city: String,
-    val state: String?,
-    val country: String?
-)
-
-data class CityDisplay(
-    val id: Long,
-    val name: String
-)
+import ca.ramzan.atmostate.domain.City
+import ca.ramzan.atmostate.domain.SavedCity
 
 @Entity(
     tableName = "saved_cities",
     foreignKeys = [
         ForeignKey(
-            entity = City::class,
+            entity = DbCity::class,
             parentColumns = ["id"],
             childColumns = ["id"],
         )
     ],
 )
-data class SavedCity(
+data class DbSavedCity(
     @PrimaryKey
     val id: Long,
     val selected: Boolean = true
@@ -42,18 +27,18 @@ data class SavedCity(
     tableName = "cities",
     foreignKeys = [
         ForeignKey(
-            entity = State::class,
+            entity = DbState::class,
             parentColumns = ["id"],
             childColumns = ["stateId"],
         ),
         ForeignKey(
-            entity = Country::class,
+            entity = DbCountry::class,
             parentColumns = ["id"],
             childColumns = ["countryId"],
         )
     ],
 )
-data class City(
+data class DbCity(
     @PrimaryKey
     val id: Long,
     val name: String,
@@ -66,15 +51,56 @@ data class City(
 )
 
 @Entity(tableName = "states")
-data class State(
+data class DbState(
     @PrimaryKey
     val id: Long,
     val name: String
 )
 
 @Entity(tableName = "countries")
-data class Country(
+data class DbCountry(
     @PrimaryKey
     val id: Long,
     val name: String
 )
+
+data class DbCoord(
+    val lat: Double,
+    val lon: Double
+)
+
+data class DbSavedCityName(
+    val id: Long,
+    val city: String,
+    val state: String?,
+    val country: String?,
+    val selected: Boolean
+)
+
+data class DbCityName(
+    val id: Long,
+    val city: String,
+    val state: String?,
+    val country: String?,
+)
+
+fun List<DbSavedCityName>.asDomainModel(): List<SavedCity> {
+    return map { c ->
+        SavedCity(
+            c.id,
+            "${c.city}${c.state?.let { ", $it" } ?: ""}${c.country?.let { ", $it" } ?: ""}",
+            c.selected
+        )
+    }
+}
+
+
+@JvmName("asDomainModelDbCityName")
+fun List<DbCityName>.asDomainModel(): List<City> {
+    return map { c ->
+        City(
+            c.id,
+            "${c.city}${c.state?.let { ", $it" } ?: ""}${c.country?.let { ", $it" } ?: ""}",
+        )
+    }
+}

@@ -2,8 +2,12 @@ package ca.ramzan.atmostate.ui.forecast
 
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
@@ -50,7 +54,7 @@ fun Forecast(
     val hourlyForecast = vm.hourlyForecast.collectAsState()
     val dailyForecast = vm.dailyForecast.collectAsState()
     val cities = vm.cities.collectAsState()
-    val currentCityName = vm.currentCityname.collectAsState("")
+    val currentCityName = vm.currentCityName.collectAsState("")
 
     val scope = rememberCoroutineScope()
 
@@ -68,7 +72,6 @@ fun Forecast(
         },
         drawerContent = {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
                 cities.value.forEach { city ->
@@ -81,7 +84,8 @@ fun Forecast(
                                     vm.setCurrentCity(city.id)
                                     scope.launch { scaffoldState.drawerState.close() }
                                 }
-                                .padding(horizontal = 16.dp)
+                                .background(if (city.selected) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.surface)
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
                         )
                     }
                 }
@@ -91,6 +95,7 @@ fun Forecast(
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { navController.navigate(MainDestinations.CITY_SELECT_ROUTE) }
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
                 }
             }

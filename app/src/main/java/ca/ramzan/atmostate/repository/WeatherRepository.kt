@@ -2,9 +2,8 @@ package ca.ramzan.atmostate.repository
 
 import android.util.Log
 import ca.ramzan.atmostate.database.cities.CityDatabaseDao
-import ca.ramzan.atmostate.database.cities.CityDisplay
-import ca.ramzan.atmostate.database.cities.CityName
-import ca.ramzan.atmostate.database.cities.SavedCity
+import ca.ramzan.atmostate.database.cities.DbSavedCity
+import ca.ramzan.atmostate.database.cities.asDomainModel
 import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
 import kotlinx.coroutines.CoroutineScope
@@ -44,14 +43,12 @@ class WeatherRepository(
         it.asDomainModel()
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
 
-    val allCities = cityDb.getAllCities().map { cityNames ->
-        cityNames.map { it.toCityDisplay() }
+    val allCities = cityDb.getAllCities().map {
+        it.asDomainModel()
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
-
-    val savedCities = cityDb.getSavedCities().map { cityNames ->
-        cityNames.map { it.toCityDisplay() }
+    val savedCities = cityDb.getSavedCities().map {
+        it.asDomainModel()
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
-
     val currentCity =
         cityDb.getSelectedCityFlow().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
 
@@ -108,7 +105,7 @@ class WeatherRepository(
 
     fun addCity(id: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-            cityDb.selectCity(SavedCity(id))
+            cityDb.selectCity(DbSavedCity(id))
             getWeather(id)
         }
     }
@@ -118,10 +115,4 @@ class WeatherRepository(
             cityDb.selectCity(cityDb.getCity(cityId))
         }
     }
-}
-
-private fun CityName.toCityDisplay(): CityDisplay {
-    return CityDisplay(
-        id,
-        "${city}${state?.let { ", $it" } ?: ""}${country?.let { ", $it" } ?: ""}")
 }

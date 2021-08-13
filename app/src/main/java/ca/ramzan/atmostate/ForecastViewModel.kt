@@ -26,7 +26,7 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
-    val currentCityname = repo.currentCity.map { it?.name ?: "" }
+    val currentCityName = repo.currentCity.map { it?.name ?: "" }
 
     val cities = repo.savedCities
     val state = repo.refreshState

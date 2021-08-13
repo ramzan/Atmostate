@@ -17,10 +17,10 @@ const val DB_VERSION = 1
         DbHourly::class,
         DbDaily::class,
         DbAlert::class,
-        City::class,
-        State::class,
-        Country::class,
-        SavedCity::class
+        DbCity::class,
+        DbState::class,
+        DbCountry::class,
+        DbSavedCity::class
     ],
     version = DB_VERSION,
     exportSchema = false
