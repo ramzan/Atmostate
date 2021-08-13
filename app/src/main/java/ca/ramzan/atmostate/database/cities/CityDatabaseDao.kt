@@ -13,6 +13,7 @@ interface CityDatabaseDao {
         FROM cities
         LEFT JOIN states ON cities.stateId == states.id
         LEFT JOIN countries ON cities.countryId == countries.id
+        ORDER BY cities.name COLLATE NOCASE
     """
     )
     fun getAllCities(): Flow<List<DbCityName>>
@@ -24,6 +25,7 @@ interface CityDatabaseDao {
         LEFT JOIN cities ON saved_cities.id == cities.id
         LEFT JOIN states ON cities.stateId == states.id
         LEFT JOIN countries ON cities.countryId == countries.id
+        ORDER BY cities.name COLLATE NOCASE
     """
     )
     fun getSavedCities(): Flow<List<DbSavedCityName>>
