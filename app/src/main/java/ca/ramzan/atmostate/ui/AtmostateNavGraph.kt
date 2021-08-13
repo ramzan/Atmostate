@@ -3,6 +3,7 @@ package ca.ramzan.atmostate.ui
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -36,7 +37,8 @@ fun AtmostateNavGraph(
     currentListState: LazyListState,
     hourlyListState: LazyListState,
     dailyListState: LazyListState,
-    pagerState: PagerState
+    pagerState: PagerState,
+    scaffoldState: ScaffoldState
 ) {
 
     NavHost(
@@ -50,7 +52,8 @@ fun AtmostateNavGraph(
                 currentListState = currentListState,
                 hourlyListState = hourlyListState,
                 dailyListState = dailyListState,
-                pagerState = pagerState
+                pagerState = pagerState,
+                scaffoldState = scaffoldState
             )
         }
         composable(MainDestinations.CITY_SELECT_ROUTE) {

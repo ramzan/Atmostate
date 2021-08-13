@@ -42,7 +42,8 @@ fun Forecast(
     currentListState: LazyListState,
     hourlyListState: LazyListState,
     dailyListState: LazyListState,
-    pagerState: PagerState
+    pagerState: PagerState,
+    scaffoldState: ScaffoldState,
 ) {
     val refreshState = vm.state.collectAsState()
     val currentForecast = vm.currentForecast.collectAsState()
@@ -51,8 +52,20 @@ fun Forecast(
     val cities = vm.cities.collectAsState()
     val currentCityName = vm.currentCityname.collectAsState("")
 
+    val scope = rememberCoroutineScope()
+
     Scaffold(
-        topBar = { ForecastAppBar(pagerState, currentCityName.value) },
+        scaffoldState = scaffoldState,
+        topBar = {
+            ForecastAppBar(
+                pagerState,
+                currentCityName.value
+            ) {
+                scope.launch {
+                    scaffoldState.drawerState.open()
+                }
+            }
+        },
         drawerContent = {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -64,7 +77,10 @@ fun Forecast(
                             text = city.name,
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { vm.setCurrentCity(city.id) }
+                                .clickable {
+                                    vm.setCurrentCity(city.id)
+                                    scope.launch { scaffoldState.drawerState.close() }
+                                }
                                 .padding(horizontal = 16.dp)
                         )
                     }
@@ -101,14 +117,14 @@ fun Forecast(
 
 @ExperimentalPagerApi
 @Composable
-fun ForecastAppBar(pagerState: PagerState, currentCityName: String) {
+fun ForecastAppBar(pagerState: PagerState, currentCityName: String, openDrawer: () -> Unit) {
     val scope = rememberCoroutineScope()
     Column {
         TopAppBar(
             title = { Text(currentCityName) },
             backgroundColor = Orange500,
             navigationIcon = {
-                IconButton(onClick = {}) {
+                IconButton(onClick = { openDrawer() }) {
                     Icon(Icons.Filled.Menu, contentDescription = "Menu")
                 }
             }
