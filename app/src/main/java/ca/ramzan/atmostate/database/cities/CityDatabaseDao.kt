@@ -33,6 +33,9 @@ interface CityDatabaseDao {
     @Query("SELECT id FROM saved_cities")
     suspend fun getSavedCityIds(): List<Long>
 
+    @Query("SELECT id FROM saved_cities")
+    fun getSavedCityIdsFlow(): Flow<List<Long>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(city: DbSavedCity)
 
@@ -61,4 +64,23 @@ interface CityDatabaseDao {
 
     @Query("SELECT * FROM saved_cities WHERE id == :id")
     suspend fun getCity(id: Long): DbSavedCity
+
+    @Query("SELECT * FROM saved_cities WHERE id = :id")
+    suspend fun isCitySaved(id: Long): DbSavedCity?
+
+    @Delete
+    suspend fun delete(savedCity: DbSavedCity)
+
+    @Query("SELECT * FROM saved_cities LIMIT 1")
+    suspend fun getAnySavedCity(): DbSavedCity?
+
+    @Transaction
+    suspend fun removeCity(id: Long) {
+        isCitySaved(id)?.let { oldCity ->
+            delete(oldCity)
+            getAnySavedCity()?.let { newCity ->
+                selectCity(newCity)
+            }
+        }
+    }
 }

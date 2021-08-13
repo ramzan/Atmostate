@@ -7,9 +7,11 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -21,27 +23,44 @@ fun CitySelect(
     vm: CitySelectViewModel,
     navController: NavController,
 ) {
-    val cities = vm.filteredCities.collectAsState()
+    val allCities = vm.filteredCities.collectAsState()
     val query = vm.query.collectAsState()
 
     Scaffold(
         topBar = { CitySelectAppBar(navController::navigateUp, query.value, vm::setQuery) },
         content = {
             LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(horizontal = 16.dp)
             ) {
                 items(
-                    items = cities.value
+                    items = allCities.value
                 ) { city ->
-                    Text(
-                        text = city.name,
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { vm.addCity(city.id) }
-                    )
+                            .clickable {
+                                if (city.saved) {
+                                    vm.removeCity(city.id)
+                                } else {
+                                    vm.addCity(city.id)
+                                }
+                            }
+                            .padding(horizontal = 16.dp, vertical = 8.dp))
+                    {
+                        Text(
+                            text = city.name,
+                            modifier = Modifier.weight(1f)
+                        )
+                        if (city.saved) {
+                            Icon(
+                                Icons.Filled.CheckCircle,
+                                contentDescription = "City saved",
+                            )
+                        }
+                    }
                 }
             }
         },

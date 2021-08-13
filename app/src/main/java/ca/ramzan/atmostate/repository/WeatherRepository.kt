@@ -8,11 +8,8 @@ import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.flow.SharingStarted.Companion.Eagerly
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed class RefreshState {
@@ -43,8 +40,8 @@ class WeatherRepository(
         it.asDomainModel()
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
 
-    val allCities = cityDb.getAllCities().map {
-        it.asDomainModel()
+    val allCities = cityDb.getAllCities().combine(cityDb.getSavedCityIdsFlow()) { cities, saved ->
+        cities.asDomainModel(saved)
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
     val savedCities = cityDb.getSavedCities().map {
         it.asDomainModel()
@@ -107,6 +104,13 @@ class WeatherRepository(
         CoroutineScope(Dispatchers.IO).launch {
             cityDb.selectCity(DbSavedCity(id))
             getWeather(id)
+        }
+    }
+
+    fun removeCity(id: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            cityDb.removeCity(id)
+            weatherDb.clearForecast(id)
         }
     }
 

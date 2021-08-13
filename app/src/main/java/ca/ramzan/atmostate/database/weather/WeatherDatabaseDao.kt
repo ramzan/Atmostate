@@ -54,6 +54,14 @@ interface WeatherDatabaseDao {
     fun getAlerts(): Flow<List<DbAlert>>
 
     @Transaction
+    suspend fun clearForecast(cityId: Long) {
+        clearCurrentForecast(cityId)
+        clearHourlyForecast(cityId)
+        clearDailyForecast(cityId)
+        clearAlerts(cityId)
+    }
+
+    @Transaction
     suspend fun saveForecast(
         cityId: Long,
         current: DbCurrent,
@@ -61,10 +69,7 @@ interface WeatherDatabaseDao {
         daily: List<DbDaily>,
         alerts: List<DbAlert>
     ) {
-        clearCurrentForecast(cityId)
-        clearHourlyForecast(cityId)
-        clearDailyForecast(cityId)
-        clearAlerts(cityId)
+        clearForecast(cityId)
         insertCurrent(current)
         insertHourly(hourly)
         insertDaily(daily)

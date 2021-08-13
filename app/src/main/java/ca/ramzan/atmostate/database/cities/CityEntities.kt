@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import ca.ramzan.atmostate.domain.City
+import ca.ramzan.atmostate.domain.CitySearchResult
 import ca.ramzan.atmostate.domain.SavedCity
 
 @Entity(
@@ -96,11 +96,12 @@ fun List<DbSavedCityName>.asDomainModel(): List<SavedCity> {
 
 
 @JvmName("asDomainModelDbCityName")
-fun List<DbCityName>.asDomainModel(): List<City> {
+fun List<DbCityName>.asDomainModel(saved: List<Long>): List<CitySearchResult> {
     return map { c ->
-        City(
+        CitySearchResult(
             c.id,
             "${c.city}${c.state?.let { ", $it" } ?: ""}${c.country?.let { ", $it" } ?: ""}",
+            saved.contains(c.id)
         )
     }
 }
