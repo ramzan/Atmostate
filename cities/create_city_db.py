@@ -1,7 +1,10 @@
 #!/usr/bin/python3
 
 import urllib.request
-from os import getcwd
+from os import getcwd, remove
+from os.path import isfile
+import shutil
+import unidecode
 import sqlite3
 import gzip
 import json
@@ -16,8 +19,16 @@ LAT = "lat"
 LON = "lon"
 COORD = "coord"
 
+assets_path = f'{getcwd()}/../app/src/main/assets/cities.db'
+db_path = f'{getcwd()}/cities.db'
+
+if isfile(db_path):
+    remove(db_path)
+
 url = 'https://bulk.openweathermap.org/sample/city.list.min.json.gz'
-urllib.request.urlretrieve(url, f'{getcwd()}/city.list.min.json.gz')
+dl_path = f'{getcwd()}/city.list.min.json.gz'
+if not isfile(dl_path):
+    urllib.request.urlretrieve(url, dl_path)
 
 con = sqlite3.connect('cities.db')
 cur = con.cursor()
@@ -33,11 +44,11 @@ cur.execute('''CREATE TABLE countries(
 cur.execute('''CREATE TABLE cities(
                 id INTEGER NOT NULL PRIMARY KEY,
                 name TEXT NOT NULL,
-                state_id INTEGER,
+                stateId INTEGER,
                 countryId INTEGER,
                 lat REAL NOT NULL,
                 lon REAL NOT NULL,
-                FOREIGN KEY (state_id) REFERENCES states (id),
+                FOREIGN KEY (stateId) REFERENCES states (id),
                 FOREIGN KEY (countryId) REFERENCES countries (id))''')
 
 with gzip.open('city.list.min.json.gz', 'r') as fin:
@@ -77,9 +88,10 @@ with gzip.open('city.list.min.json.gz', 'r') as fin:
 
         cur.execute(
             "INSERT INTO cities VALUES (?, ?, ?, ?, ?, ?)",
-            (c[ID], c[NAME], state_id,
+            (c[ID], unidecode.unidecode(c[NAME]), state_id,
                 country_id, c[COORD][LAT], c[COORD][LON])
         )
 
 con.commit()
 con.close()
+shutil.copyfile(db_path, assets_path)

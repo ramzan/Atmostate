@@ -16,3 +16,5 @@ local.properties
 .idea
 app/release
 misc
+cities/city.list.min.json.gz
+cities/cities.db
