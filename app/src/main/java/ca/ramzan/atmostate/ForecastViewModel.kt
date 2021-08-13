@@ -34,5 +34,6 @@ class ForecastViewModel @Inject constructor(
     val currentForecast = repo.currentForecast
     val hourlyForecast = repo.hourlyForecast
     val dailyForecast = repo.dailyForecast
+    val alerts = repo.alerts
 
 }

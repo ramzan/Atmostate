@@ -53,6 +53,7 @@ fun Forecast(
     val currentForecast = vm.currentForecast.collectAsState()
     val hourlyForecast = vm.hourlyForecast.collectAsState()
     val dailyForecast = vm.dailyForecast.collectAsState()
+    val alerts = vm.alerts.collectAsState()
     val cities = vm.cities.collectAsState()
     val currentCityName = vm.currentCityName.collectAsState("")
 
@@ -108,7 +109,11 @@ fun Forecast(
                 ) {
                     Box {
                         when (page) {
-                            0 -> CurrentForecast(currentListState, currentForecast.value)
+                            0 -> CurrentForecast(
+                                currentListState,
+                                currentForecast.value,
+                                alerts.value
+                            )
                             1 -> HourlyForecast(hourlyListState, hourlyForecast.value)
                             2 -> DailyForecast(dailyListState, dailyForecast.value)
                         }

@@ -1,9 +1,11 @@
 package ca.ramzan.atmostate.ui.forecast
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import ca.ramzan.atmostate.domain.Alert
 import ca.ramzan.atmostate.domain.Current
 import coil.compose.rememberImagePainter
 import java.time.ZonedDateTime
@@ -21,7 +24,7 @@ import com.ramzan.atmostate.R as AtmostateR
 private val gridPadding = 24.dp
 
 @Composable
-fun CurrentForecast(listState: LazyListState, current: Current?) {
+fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Alert>) {
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(16.dp),
@@ -76,6 +79,11 @@ fun CurrentForecast(listState: LazyListState, current: Current?) {
 
                 }
             }
+        }
+        items(
+            items = alerts
+        ) { alert ->
+            Alert(alert)
         }
     }
 }
@@ -217,5 +225,21 @@ fun Sunset(sunset: ZonedDateTime) {
         )
         Text(text = "Sunset", style = TextStyle(fontWeight = FontWeight.Light))
         Text(text = TimeFormatter.toDayHour(sunset))
+    }
+}
+
+@Composable
+fun Alert(alert: Alert) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colors.error)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
+    ) {
+        Text(text = alert.event)
+        Text(text = "Start: ${TimeFormatter.toDate(alert.start)}")
+        Text(text = "End: ${TimeFormatter.toDate(alert.end)}")
+        Text(text = alert.senderName)
+        Text(text = alert.description)
     }
 }
