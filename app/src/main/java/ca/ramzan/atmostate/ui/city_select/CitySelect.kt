@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -61,6 +62,15 @@ fun CitySelectAppBar(
                     value = query,
                     onValueChange = setQuery,
                     modifier = Modifier.fillMaxWidth(),
+                    trailingIcon = {
+                        if (query.isNotEmpty()) {
+                            Icon(
+                                Icons.Filled.Clear,
+                                contentDescription = "Clear search query",
+                                modifier = Modifier.clickable { setQuery("") }
+                            )
+                        }
+                    },
                     placeholder = {
                         Text(text = "Search for a location")
                     }
