@@ -51,6 +51,13 @@ cur.execute('''CREATE TABLE cities(
                 FOREIGN KEY (stateId) REFERENCES states (id),
                 FOREIGN KEY (countryId) REFERENCES countries (id))''')
 
+country_names = {}
+
+with open('countries.csv', 'r') as fin:
+    for line in fin.readlines():
+        code, name = line.strip().split("|")
+        country_names[code] = name
+
 with gzip.open('city.list.min.json.gz', 'r') as fin:
     cities = json.load(fin)
 
@@ -81,7 +88,7 @@ with gzip.open('city.list.min.json.gz', 'r') as fin:
                 countries[country] = country_count
                 cur.execute(
                     "INSERT INTO countries VALUES (?, ?)",
-                    (country_count, country)
+                    (country_count, country_names[country])
                 )
                 country_count += 1
             country_id = countries[country]
