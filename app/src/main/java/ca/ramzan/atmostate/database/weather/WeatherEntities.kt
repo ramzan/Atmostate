@@ -2,12 +2,19 @@ package ca.ramzan.atmostate.database.weather
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import ca.ramzan.atmostate.domain.Alert
+import ca.ramzan.atmostate.domain.Current
+import ca.ramzan.atmostate.domain.Daily
+import ca.ramzan.atmostate.domain.Hourly
+import java.time.Instant
+import java.time.ZoneId
 
 @Entity(tableName = "current_table")
 data class DbCurrent(
     @PrimaryKey
     val cityId: Long,
     val date: Long,
+    val tz: String,
     val sunrise: Long,
     val sunset: Long,
     val temp: Int,
@@ -29,6 +36,7 @@ data class DbCurrent(
 data class DbHourly(
     val cityId: Long,
     val date: Long,
+    val tz: String,
     val temp: Int,
     val feelsLike: Int,
     val windSpeed: Int,
@@ -45,6 +53,7 @@ data class DbHourly(
 data class DbDaily(
     val cityId: Long,
     val date: Long,
+    val tz: String,
     val tempMin: Int,
     val tempMax: Int,
     val tempMorn: Int,
@@ -70,9 +79,96 @@ data class DbDaily(
 data class DbAlert(
     val cityId: Long,
     val alertId: Long,
+    val tz: String,
     val senderName: String,
     val event: String,
     val start: Long,
     val end: Long,
     val description: String
 )
+
+fun DbCurrent.asDomainModel(): Current {
+    return Current(
+        lastUpdated = Instant.ofEpochSecond(date).atZone(ZoneId.of(tz)),
+        sunrise = Instant.ofEpochSecond(sunrise).atZone(ZoneId.of(tz)),
+        sunset = Instant.ofEpochSecond(sunset).atZone(ZoneId.of(tz)),
+        temp,
+        feelsLike,
+        pressure,
+        humidity,
+        dewPoint,
+        clouds,
+        uvi,
+        visibility,
+        windSpeed,
+        windGust,
+        windDeg,
+        icon,
+        description
+    )
+}
+
+fun List<DbHourly>.asDomainModel(): List<Hourly> {
+    return map { hourly ->
+        hourly.run {
+            Hourly(
+                time = Instant.ofEpochSecond(date).atZone(ZoneId.of(tz)),
+                temp,
+                feelsLike,
+                windSpeed,
+                windGust,
+                windDeg,
+                pop,
+                rain,
+                snow,
+                icon,
+                description
+            )
+        }
+    }
+}
+
+@JvmName("asDomainModelDbDaily")
+fun List<DbDaily>.asDomainModel(): List<Daily> {
+    return map { daily ->
+        daily.run {
+            Daily(
+                date = Instant.ofEpochSecond(date).atZone(ZoneId.of(tz)),
+                tempMin,
+                tempMax,
+                tempMorn,
+                tempDay,
+                tempEve,
+                tempNight,
+                feelsLikeMorn,
+                feelsLikeDay,
+                feelsLikeEve,
+                feelsLikeNight,
+                humidity,
+                windSpeed,
+                windGust,
+                windDeg,
+                pop,
+                rain,
+                snow,
+                icon,
+                description
+            )
+        }
+    }
+}
+
+@JvmName("asDomainModelDbAlert")
+fun List<DbAlert>.asDomainModel(): List<Alert> {
+    return mapIndexed { i, alert ->
+        alert.run {
+            Alert(
+                senderName = senderName,
+                event = event,
+                start = Instant.ofEpochSecond(start).atZone(ZoneId.of(tz)),
+                end = Instant.ofEpochSecond(end).atZone(ZoneId.of(tz)),
+                description = description
+            )
+        }
+    }
+}

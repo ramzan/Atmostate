@@ -7,7 +7,6 @@ import ca.ramzan.atmostate.database.cities.CityName
 import ca.ramzan.atmostate.database.cities.SavedCity
 import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
-import ca.ramzan.atmostate.ui.forecast.capitalized
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import kotlin.math.roundToInt
 
 sealed class RefreshState {
     object Loading : RefreshState()
@@ -31,12 +29,20 @@ class WeatherRepository(
 ) {
 
     val currentForecast =
-        weatherDb.getCurrentForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
+        weatherDb.getCurrentForecast().map {
+            it?.asDomainModel()
+        }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
     val hourlyForecast =
-        weatherDb.getHourlyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
+        weatherDb.getHourlyForecast().map {
+            it.asDomainModel()
+        }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
     val dailyForecast =
-        weatherDb.getDailyForecast().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
-    val alerts = weatherDb.getAlerts()
+        weatherDb.getDailyForecast().map {
+            it.asDomainModel()
+        }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
+    val alerts = weatherDb.getAlerts().map {
+        it.asDomainModel()
+    }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
 
     val allCities = cityDb.getAllCities().map { cityNames ->
         cityNames.map { it.toCityDisplay() }
@@ -87,10 +93,10 @@ class WeatherRepository(
                         this.run {
                             weatherDb.saveForecast(
                                 cityId,
-                                currentToEntity(cityId, current),
-                                hourlyToEntity(cityId, hourly),
-                                dailyToEntity(cityId, daily),
-                                alertsToEntity(cityId, alerts)
+                                current.asDatabaseModel(cityId, timezone),
+                                hourly.asDatabaseModel(cityId, timezone),
+                                daily.asDatabaseModel(cityId, timezone),
+                                alerts.asDatabaseModel(cityId, timezone)
                             )
                             _refreshState.emit(RefreshState.Loaded)
                         }
@@ -98,97 +104,6 @@ class WeatherRepository(
                 }
             }
         }
-    }
-
-    private fun currentToEntity(cityId: Long, current: Current): DbCurrent {
-        return current.run {
-            DbCurrent(
-                cityId = cityId,
-                date = dt,
-                sunrise = sunrise,
-                sunset = sunset,
-                temp = temp.roundToInt(),
-                feelsLike = feelsLike.roundToInt(),
-                pressure = pressure / 10,
-                humidity = humidity.roundToInt(),
-                dewPoint = dewPoint.roundToInt(),
-                clouds = clouds.roundToInt(),
-                uvi = uvi.roundToInt(),
-                visibility = (visibility / 1000).roundToInt(),
-                windSpeed = (windSpeed * 3.6).roundToInt(),
-                windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
-                windDeg = windDeg,
-                icon = weather.first().icon,
-                description = weather.first().description.capitalized(),
-            )
-        }
-    }
-
-    private fun hourlyToEntity(cityId: Long, hourlies: List<Hourly>): List<DbHourly> {
-        return hourlies.map { hourly ->
-            hourly.run {
-                DbHourly(
-                    cityId = cityId,
-                    date = dt,
-                    temp = temp.roundToInt(),
-                    feelsLike = feelsLike.roundToInt(),
-                    windSpeed = (windSpeed * 3.6).roundToInt(),
-                    windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
-                    windDeg = windDeg,
-                    pop = (pop * 100).roundToInt(),
-                    rain = rain?.hour,
-                    snow = snow?.hour,
-                    icon = weather.first().icon,
-                    description = weather.first().description.capitalized(),
-                )
-            }
-        }
-    }
-
-    private fun dailyToEntity(cityId: Long, dailies: List<Daily>): List<DbDaily> {
-        return dailies.map { daily ->
-            daily.run {
-                DbDaily(
-                    cityId = cityId,
-                    date = dt,
-                    tempMin = temp.min.roundToInt(),
-                    tempMax = temp.max.roundToInt(),
-                    tempMorn = temp.morn.roundToInt(),
-                    tempDay = temp.day.roundToInt(),
-                    tempEve = temp.eve.roundToInt(),
-                    tempNight = temp.night.roundToInt(),
-                    feelsLikeMorn = feelsLike?.morn?.roundToInt(),
-                    feelsLikeDay = feelsLike?.day?.roundToInt(),
-                    feelsLikeEve = feelsLike?.eve?.roundToInt(),
-                    feelsLikeNight = feelsLike?.night?.roundToInt(),
-                    humidity = humidity.roundToInt(),
-                    windSpeed = (windSpeed * 3.6).roundToInt(),
-                    windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
-                    windDeg = windDeg,
-                    pop = (pop * 100).roundToInt(),
-                    rain = rain,
-                    snow = snow,
-                    icon = weather.first().icon,
-                    description = weather.first().description.capitalized(),
-                )
-            }
-        }
-    }
-
-    private fun alertsToEntity(cityId: Long, alerts: List<Alert>?): List<DbAlert> {
-        return alerts?.mapIndexed { i, alert ->
-            alert.run {
-                DbAlert(
-                    cityId = cityId,
-                    alertId = i.toLong(),
-                    senderName = senderName,
-                    event = event,
-                    start = start,
-                    end = end,
-                    description = description,
-                )
-            }
-        } ?: emptyList()
     }
 
     fun addCity(id: Long) {

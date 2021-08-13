@@ -1,46 +1,21 @@
 package ca.ramzan.atmostate.ui.forecast
 
-import java.time.Instant
-import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
 object TimeFormatter {
-    private val dayHourFormatter =
-        DateTimeFormatter.ofPattern("HH:mm").withZone(ZoneId.systemDefault())
-    private val clockHourOfDayFormatter =
-        DateTimeFormatter.ofPattern("ha").withZone(ZoneId.systemDefault())
-    private val hourOfDayFormatter =
-        DateTimeFormatter.ofPattern("H").withZone(ZoneId.systemDefault())
-    private val weekDayFormatter =
-        DateTimeFormatter.ofPattern("EEEE").withZone(ZoneId.systemDefault())
+    private val dayHourFormatter = DateTimeFormatter.ofPattern("HH:mm")
+    private val clockHourOfDayFormatter = DateTimeFormatter.ofPattern("ha")
+    private val hourOfDayFormatter = DateTimeFormatter.ofPattern("H")
+    private val weekDayFormatter = DateTimeFormatter.ofPattern("EEEE")
 
-    fun toDayHour(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            dayHourFormatter.format(this)
-        }
-    }
+    fun toDayHour(time: ZonedDateTime): String = dayHourFormatter.format(time)
 
-    fun toDate(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            DateTimeFormatter.ISO_LOCAL_DATE_TIME.withZone(ZoneId.systemDefault()).format(this)
-        }
-    }
+    fun toDate(time: ZonedDateTime): String = DateTimeFormatter.RFC_1123_DATE_TIME.format(time)
 
-    fun toHourOfDay(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            clockHourOfDayFormatter.format(this)
-        }
-    }
+    fun toHourOfDay(time: ZonedDateTime): String = clockHourOfDayFormatter.format(time)
 
-    fun isMidnight(time: Long): Boolean {
-        return Instant.ofEpochSecond(time).run {
-            hourOfDayFormatter.format(this) == "0"
-        }
-    }
+    fun isMidnight(time: ZonedDateTime): Boolean = hourOfDayFormatter.format(time).equals("0")
 
-    fun toWeekDay(time: Long): String {
-        return Instant.ofEpochSecond(time).run {
-            weekDayFormatter.format(this)
-        }
-    }
+    fun toWeekDay(time: ZonedDateTime): String = weekDayFormatter.format(time)
 }

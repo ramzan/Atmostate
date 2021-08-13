@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ca.ramzan.atmostate.database.weather.DbHourly
+import ca.ramzan.atmostate.domain.Hourly
 import ca.ramzan.atmostate.ui.theme.Lime200
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
@@ -28,7 +28,7 @@ import com.ramzan.atmostate.R
 @ExperimentalFoundationApi
 @ExperimentalAnimationApi
 @Composable
-fun HourlyForecast(listState: LazyListState, hourly: List<DbHourly>) {
+fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -42,10 +42,10 @@ fun HourlyForecast(listState: LazyListState, hourly: List<DbHourly>) {
         }
         hourly.forEachIndexed { i, hour ->
             hour.run {
-                if (TimeFormatter.isMidnight(hour.date)) {
+                if (TimeFormatter.isMidnight(hour.time)) {
                     stickyHeader {
                         Text(
-                            text = TimeFormatter.toWeekDay(hour.date),
+                            text = TimeFormatter.toWeekDay(hour.time),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .background(Lime200, RectangleShape)
@@ -69,7 +69,7 @@ fun HourlyForecast(listState: LazyListState, hourly: List<DbHourly>) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text(TimeFormatter.toHourOfDay(date))
+                            Text(TimeFormatter.toHourOfDay(time))
                             Column {
                                 Row(verticalAlignment = Alignment.Bottom) {
                                     Image(

@@ -1,6 +1,12 @@
 package ca.ramzan.atmostate.network
 
+import ca.ramzan.atmostate.database.weather.DbAlert
+import ca.ramzan.atmostate.database.weather.DbCurrent
+import ca.ramzan.atmostate.database.weather.DbDaily
+import ca.ramzan.atmostate.database.weather.DbHourly
 import com.squareup.moshi.Json
+import java.util.*
+import kotlin.math.roundToInt
 
 sealed class WeatherResult {
     data class Success(
@@ -8,10 +14,10 @@ sealed class WeatherResult {
         val lon: Double,
         val timezone: String,
         val timezone_offset: Long,
-        val current: Current,
-        val hourly: List<Hourly>,
-        val daily: List<Daily>,
-        val alerts: List<Alert>?,
+        val current: NetworkCurrent,
+        val hourly: List<NetworkHourly>,
+        val daily: List<NetworkDaily>,
+        val alerts: List<NetworkAlert>?,
     ) : WeatherResult()
 
     data class Failure(
@@ -32,7 +38,7 @@ data class Weather(
 )
 
 // dt properties are Unix seconds
-data class Current(
+data class NetworkCurrent(
     val dt: Long,
     val sunrise: Long,
     val sunset: Long,
@@ -52,7 +58,7 @@ data class Current(
     val weather: List<Weather>
 )
 
-data class Hourly(
+data class NetworkHourly(
     val dt: Long,
     val temp: Double,
     @Json(name = "feels_like") val feelsLike: Double,
@@ -71,7 +77,7 @@ data class Hourly(
     val weather: List<Weather>
 )
 
-data class Daily(
+data class NetworkDaily(
     val dt: Long,
     val sunrise: Long,
     val sunset: Long,
@@ -109,10 +115,113 @@ data class Daily(
     )
 }
 
-data class Alert(
+data class NetworkAlert(
     @Json(name = "sender_name") val senderName: String,
     val event: String,
     val start: Long,
     val end: Long,
     val description: String
 )
+
+fun NetworkCurrent.asDatabaseModel(cityId: Long, tz: String): DbCurrent {
+    return DbCurrent(
+        cityId = cityId,
+        date = dt,
+        tz = tz,
+        sunrise = sunrise,
+        sunset = sunset,
+        temp = temp.roundToInt(),
+        feelsLike = feelsLike.roundToInt(),
+        pressure = pressure / 10,
+        humidity = humidity.roundToInt(),
+        dewPoint = dewPoint.roundToInt(),
+        clouds = clouds.roundToInt(),
+        uvi = uvi.roundToInt(),
+        visibility = (visibility / 1000).roundToInt(),
+        windSpeed = (windSpeed * 3.6).roundToInt(),
+        windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
+        windDeg = windDeg,
+        icon = weather.first().icon,
+        description = weather.first().description.capitalized(),
+    )
+}
+
+fun List<NetworkHourly>.asDatabaseModel(cityId: Long, tz: String): List<DbHourly> {
+    return map { hourly ->
+        hourly.run {
+            DbHourly(
+                cityId = cityId,
+                date = dt,
+                tz = tz,
+                temp = temp.roundToInt(),
+                feelsLike = feelsLike.roundToInt(),
+                windSpeed = (windSpeed * 3.6).roundToInt(),
+                windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
+                windDeg = windDeg,
+                pop = (pop * 100).roundToInt(),
+                rain = rain?.hour,
+                snow = snow?.hour,
+                icon = weather.first().icon,
+                description = weather.first().description.capitalized(),
+            )
+        }
+    }
+}
+
+@JvmName("asDatabaseModelNetworkDaily")
+fun List<NetworkDaily>.asDatabaseModel(cityId: Long, tz: String): List<DbDaily> {
+    return map { daily ->
+        daily.run {
+            DbDaily(
+                cityId = cityId,
+                date = dt,
+                tz = tz,
+                tempMin = temp.min.roundToInt(),
+                tempMax = temp.max.roundToInt(),
+                tempMorn = temp.morn.roundToInt(),
+                tempDay = temp.day.roundToInt(),
+                tempEve = temp.eve.roundToInt(),
+                tempNight = temp.night.roundToInt(),
+                feelsLikeMorn = feelsLike?.morn?.roundToInt(),
+                feelsLikeDay = feelsLike?.day?.roundToInt(),
+                feelsLikeEve = feelsLike?.eve?.roundToInt(),
+                feelsLikeNight = feelsLike?.night?.roundToInt(),
+                humidity = humidity.roundToInt(),
+                windSpeed = (windSpeed * 3.6).roundToInt(),
+                windGust = ((windGust ?: 0.0) * 3.6).roundToInt(),
+                windDeg = windDeg,
+                pop = (pop * 100).roundToInt(),
+                rain = rain,
+                snow = snow,
+                icon = weather.first().icon,
+                description = weather.first().description.capitalized(),
+            )
+        }
+    }
+}
+
+@JvmName("asDatabaseModelNetworkAlert")
+fun List<NetworkAlert>?.asDatabaseModel(cityId: Long, tz: String): List<DbAlert> {
+    return this?.mapIndexed { i, alert ->
+        alert.run {
+            DbAlert(
+                cityId = cityId,
+                alertId = i.toLong(),
+                tz = tz,
+                senderName = senderName,
+                event = event,
+                start = start,
+                end = end,
+                description = description,
+            )
+        }
+    } ?: emptyList()
+}
+
+fun String.capitalized(): String {
+    return this.replaceFirstChar {
+        if (it.isLowerCase()) it.titlecase(
+            Locale.getDefault()
+        ) else it.toString()
+    }
+}

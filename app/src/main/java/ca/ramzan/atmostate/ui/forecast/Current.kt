@@ -13,14 +13,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import ca.ramzan.atmostate.database.weather.DbCurrent
+import ca.ramzan.atmostate.domain.Current
 import coil.compose.rememberImagePainter
+import java.time.ZonedDateTime
 import com.ramzan.atmostate.R as AtmostateR
 
 private val gridPadding = 24.dp
 
 @Composable
-fun CurrentForecast(listState: LazyListState, current: DbCurrent?) {
+fun CurrentForecast(listState: LazyListState, current: Current?) {
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(16.dp),
@@ -35,7 +36,7 @@ fun CurrentForecast(listState: LazyListState, current: DbCurrent?) {
             return@LazyColumn
         }
         current.run {
-            item { TimeUpdated(date) }
+            item { TimeUpdated(lastUpdated) }
             item {
                 Weather(
                     description,
@@ -196,7 +197,7 @@ fun DewPoint(dewPoint: String) {
 }
 
 @Composable
-fun Sunrise(sunrise: Long) {
+fun Sunrise(sunrise: ZonedDateTime) {
     GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.sunrise),
@@ -208,7 +209,7 @@ fun Sunrise(sunrise: Long) {
 }
 
 @Composable
-fun Sunset(sunset: Long) {
+fun Sunset(sunset: ZonedDateTime) {
     GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.sunset),
