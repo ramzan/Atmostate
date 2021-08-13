@@ -113,6 +113,7 @@ class WeatherRepository(
     fun setCurrentCity(cityId: Long) {
         CoroutineScope(Dispatchers.IO).launch {
             cityDb.selectCity(cityDb.getCity(cityId))
+            getWeather(cityId)
         }
     }
 }
