@@ -6,20 +6,20 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import ca.ramzan.atmostate.domain.Country
 import ca.ramzan.atmostate.ui.theme.Orange100
 import ca.ramzan.atmostate.ui.theme.Orange500
 
@@ -30,17 +30,42 @@ fun CitySelect(
     navController: NavController,
 ) {
     val allCities = vm.filteredCities.collectAsState()
+    val countries = vm.countries.collectAsState()
     val query = vm.query.collectAsState()
+    val selectedIndex = vm.countryIndex.collectAsState()
+
+    val (expanded, setExpanded) = remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = { CitySelectAppBar(navController::navigateUp) },
         content = {
+            if (expanded) {
+                CountrySelector(
+                    countries.value,
+                    selectedIndex.value,
+                    vm::selectCountry,
+                    setExpanded
+                )
+                return@Scaffold
+            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
                 stickyHeader {
-                    SearchBox(query.value, vm::setQuery)
+                    Column(Modifier.fillMaxWidth()) {
+                        Text(
+                            countries.value[selectedIndex.value].name,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable(onClick = { setExpanded(true) })
+                                .background(
+                                    MaterialTheme.colors.primaryVariant
+                                )
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        )
+                        SearchBox(query.value, vm::setQuery)
+                    }
                 }
                 items(
                     items = allCities.value
@@ -119,5 +144,34 @@ fun SearchBox(query: String, setQuery: (String) -> Unit) {
     )
     SideEffect {
         requester.requestFocus()
+    }
+}
+
+@Composable
+fun CountrySelector(
+    countries: List<Country>,
+    selectedIndex: Int,
+    setSelectedIndex: (Int) -> Unit,
+    setExpanded: (Boolean) -> Unit
+) {
+    LazyColumn(
+        modifier = Modifier.fillMaxSize()
+    ) {
+        itemsIndexed(items = countries) { i, country ->
+            Text(
+                text = country.name,
+                modifier = Modifier
+                    .background(
+                        if (i == selectedIndex) MaterialTheme.colors.primaryVariant
+                        else MaterialTheme.colors.surface
+                    )
+                    .clickable {
+                        setSelectedIndex(i)
+                        setExpanded(false)
+                    }
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .fillMaxWidth()
+            )
+        }
     }
 }

@@ -11,6 +11,11 @@ data class City(
     val name: String,
 )
 
+data class Country(
+    val id: Long,
+    val name: String,
+)
+
 data class CitySearchResult(
     val id: Long,
     val name: String,

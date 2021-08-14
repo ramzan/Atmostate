@@ -101,7 +101,7 @@ fun List<DbCityName>.asDomainModel(saved: List<Long>): List<CitySearchResult> {
         CitySearchResult(
             c.id,
             "${c.city}${c.state?.let { ", $it" } ?: ""}${c.country?.let { ", $it" } ?: ""}",
-            saved.contains(c.id)
+            saved.binarySearch(c.id) >= 0
         )
     }
 }

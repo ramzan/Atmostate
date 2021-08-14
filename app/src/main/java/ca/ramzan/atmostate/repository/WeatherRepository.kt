@@ -39,19 +39,11 @@ class WeatherRepository(
     val alerts = weatherDb.getAlerts().map {
         it.asDomainModel()
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
-
-    val allCities = cityDb.getAllCities().combine(cityDb.getSavedCityIdsFlow()) { cities, saved ->
-        cities.asDomainModel(saved)
-    }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
     val savedCities = cityDb.getSavedCities().map {
         it.asDomainModel()
     }.stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
     val currentCity =
         cityDb.getSelectedCityFlow().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
-
-
-    private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loaded)
-    val refreshState: StateFlow<RefreshState> get() = _refreshState
 
     init {
         CoroutineScope(Dispatchers.Default).launch {
@@ -100,6 +92,15 @@ class WeatherRepository(
         }
     }
 
+    fun setCurrentCity(cityId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            cityDb.selectCity(cityDb.getCity(cityId))
+            getWeather(cityId)
+        }
+    }
+
+    //------------------------------------------------------------------------------------------
+
     fun addCity(id: Long) {
         CoroutineScope(Dispatchers.IO).launch {
             cityDb.selectCity(DbSavedCity(id))
@@ -114,10 +115,25 @@ class WeatherRepository(
         }
     }
 
-    fun setCurrentCity(cityId: Long) {
-        CoroutineScope(Dispatchers.IO).launch {
-            cityDb.selectCity(cityDb.getCity(cityId))
-            getWeather(cityId)
+    //------------------------------------------------------------------------------------------
+
+    private val countryId = MutableStateFlow(1L)
+
+    fun setCurrentCountry(newCountryId: Long) {
+        CoroutineScope(Dispatchers.Default).launch {
+            countryId.emit(newCountryId)
         }
     }
+
+    private val savedCityIds =
+        cityDb.getSavedCityIdsFlow().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, emptyList())
+
+    val citiesForCountry = countryId.combine(savedCityIds) { countryId, savedCitiesIds ->
+        cityDb.getCitiesForCountry(countryId).asDomainModel(savedCitiesIds)
+    }
+
+    suspend fun getAllCountries() = cityDb.getAllCountries()
+
+    private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loaded)
+    val refreshState: StateFlow<RefreshState> get() = _refreshState
 }
