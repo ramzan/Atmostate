@@ -85,12 +85,12 @@ interface CityDatabaseDao {
     @Transaction
     suspend fun removeCity(id: Long) {
         isCitySaved(id)?.let { oldCity ->
-            delete(oldCity)
             if (oldCity.selected) {
                 getAnySavedCity()?.let { newCity ->
                     selectCity(newCity)
                 }
             }
+            delete(oldCity.copy(selected = false))
         }
     }
 }
