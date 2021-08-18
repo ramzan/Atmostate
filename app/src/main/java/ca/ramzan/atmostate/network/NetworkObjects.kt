@@ -40,8 +40,8 @@ data class Weather(
 // dt properties are Unix seconds
 data class NetworkCurrent(
     val dt: Long,
-    val sunrise: Long,
-    val sunset: Long,
+    val sunrise: Long?,
+    val sunset: Long?,
     val temp: Double,
     @Json(name = "feels_like") val feelsLike: Double,
     val pressure: Double,
@@ -79,10 +79,10 @@ data class NetworkHourly(
 
 data class NetworkDaily(
     val dt: Long,
-    val sunrise: Long,
-    val sunset: Long,
-    val moonrise: Long,
-    val moonset: Long,
+    val sunrise: Long?,
+    val sunset: Long?,
+    val moonrise: Long?,
+    val moonset: Long?,
     @Json(name = "moon_phase") val moonPhase: Double,
     val temp: Temp,
     @Json(name = "feels_like") val feelsLike: FeelsLike?,
@@ -128,8 +128,8 @@ fun NetworkCurrent.asDatabaseModel(cityId: Long, tz: String): DbCurrent {
         cityId = cityId,
         date = dt,
         tz = tz,
-        sunrise = sunrise,
-        sunset = sunset,
+        sunrise = sunrise ?: 0,
+        sunset = sunset ?: 0,
         temp = temp.roundToInt(),
         feelsLike = feelsLike.roundToInt(),
         pressure = pressure / 10,
