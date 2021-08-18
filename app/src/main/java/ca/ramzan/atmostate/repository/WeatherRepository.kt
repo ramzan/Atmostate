@@ -1,6 +1,10 @@
 package ca.ramzan.atmostate.repository
 
 import android.util.Log
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import ca.ramzan.atmostate.database.cities.CityDatabaseDao
 import ca.ramzan.atmostate.database.cities.DbSavedCity
 import ca.ramzan.atmostate.database.cities.asDomainModel
@@ -21,12 +25,15 @@ sealed class RefreshState {
 }
 
 const val USER_LOCATION_CITY_ID = 0L
+const val USA_COUNTRY_CODE = 241L
+val SAVED_COUNTRY_ID = longPreferencesKey("saved_country_id")
 
 class WeatherRepository(
     private val weatherDb: WeatherDatabaseDao,
     private val cityDb: CityDatabaseDao,
     private val api: WeatherApi,
-    private val lm: LocationManager
+    private val lm: LocationManager,
+    private val prefs: DataStore<Preferences>
 ) {
 
     fun removeUserLocation() {
@@ -144,11 +151,14 @@ class WeatherRepository(
 
     //------------------------------------------------------------------------------------------
 
-    private val countryId = MutableStateFlow(1L)
+    val countryId = prefs.data.map { it[SAVED_COUNTRY_ID] ?: USA_COUNTRY_CODE }
+        .stateIn(CoroutineScope(Dispatchers.IO), Eagerly, USA_COUNTRY_CODE)
 
     fun setCurrentCountry(newCountryId: Long) {
         CoroutineScope(Dispatchers.Default).launch {
-            countryId.emit(newCountryId)
+            prefs.edit {
+                it[SAVED_COUNTRY_ID] = newCountryId
+            }
         }
     }
 

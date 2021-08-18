@@ -1,12 +1,15 @@
 package ca.ramzan.atmostate.di
 
 import android.app.Application
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import ca.ramzan.atmostate.database.AtmostateDatabase
 import ca.ramzan.atmostate.database.cities.CityDatabaseDao
 import ca.ramzan.atmostate.database.weather.WeatherDatabaseDao
 import ca.ramzan.atmostate.network.WeatherApi
 import ca.ramzan.atmostate.repository.WeatherRepository
 import ca.ramzan.atmostate.ui.LocationManager
+import ca.ramzan.atmostate.ui.forecast.dataStore
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.squareup.moshi.Moshi
@@ -46,13 +49,18 @@ class AppModule {
 
     @Provides
     @Singleton
+    fun prefs(app: Application) = app.applicationContext.dataStore
+
+    @Provides
+    @Singleton
     fun weatherRepo(
         weatherDao: WeatherDatabaseDao,
         cityDao: CityDatabaseDao,
         api: WeatherApi,
-        lm: LocationManager
+        lm: LocationManager,
+        prefs: DataStore<Preferences>
     ) =
-        WeatherRepository(weatherDao, cityDao, api, lm)
+        WeatherRepository(weatherDao, cityDao, api, lm, prefs)
 
     @Provides
     @Singleton

@@ -21,13 +21,12 @@ class CitySelectViewModel @Inject constructor(
     val countries: StateFlow<List<Country>>
         get() = _countries
 
-    private val _countryIndex = MutableStateFlow(0)
-    val countryIndex: StateFlow<Int>
-        get() = _countryIndex
+    val countryIndex = repo.countryId.combine(countries) { id, countries ->
+        countries.withIndex().firstOrNull { it.value.id == id }?.index ?: 0
+    }.stateIn(CoroutineScope(Dispatchers.Default), SharingStarted.Eagerly, 0)
 
     fun selectCountry(index: Int) {
         viewModelScope.launch {
-            _countryIndex.emit(index)
             repo.setCurrentCountry(countries.value[index].id)
         }
     }
@@ -36,7 +35,6 @@ class CitySelectViewModel @Inject constructor(
         viewModelScope.launch {
             CoroutineScope(Dispatchers.IO).launch {
                 _countries.emit(repo.getAllCountries())
-                repo.setCurrentCountry(countries.value[countryIndex.value].id)
             }
         }
     }
