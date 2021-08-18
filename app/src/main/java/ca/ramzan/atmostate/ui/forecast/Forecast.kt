@@ -83,6 +83,8 @@ fun Forecast(
 
     val scope = rememberCoroutineScope()
 
+    val (errorShown, setErrorShown) = rememberSaveable { mutableStateOf(false) }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
@@ -175,24 +177,27 @@ fun Forecast(
         },
         backgroundColor = Orange100,
     )
-    showErrorMessage(refreshState.value, scope, scaffoldState)
+    if (!errorShown) {
+        setErrorShown(showErrorMessage(refreshState.value, scope, scaffoldState))
+    }
 }
 
 fun showErrorMessage(
     refreshState: RefreshState,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
-) {
+): Boolean {
+    var shown = false
     (refreshState as? RefreshState.Error)?.run {
-        scope.launch {
-            scaffoldState.snackbarHostState.run {
-                // Prevent duplicate snackbars when loading multiple cities
-                if (currentSnackbarData?.message != message) {
-                    showSnackbar(message)
-                }
+        scaffoldState.snackbarHostState.run {
+            // Prevent duplicate snackbars when loading multiple cities
+            if (currentSnackbarData?.message != message) {
+                scope.launch { showSnackbar(message) }
+                shown = true
             }
         }
     }
+    return shown
 }
 
 @ExperimentalPagerApi
