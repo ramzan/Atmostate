@@ -1,5 +1,6 @@
 package ca.ramzan.atmostate.ui
 
+//import ca.ramzan.atmostate.ui.forecast.ShowCurrentLocationForecast
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.lazy.LazyListState
@@ -16,6 +17,7 @@ import ca.ramzan.atmostate.ui.city_select.CitySelectViewModel
 import ca.ramzan.atmostate.ui.forecast.Forecast
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
+import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 
@@ -24,6 +26,7 @@ object MainDestinations {
     const val CITY_SELECT_ROUTE = "city_select"
 }
 
+@ExperimentalPermissionsApi
 @ExperimentalCoroutinesApi
 @ExperimentalPagerApi
 @ExperimentalFoundationApi

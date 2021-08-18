@@ -26,6 +26,10 @@ class ForecastViewModel @Inject constructor(
         }
     }
 
+    fun onPermissionGranted() {
+        repo.onPermissionGranted()
+    }
+
     val currentCityName = repo.currentCity.map { it?.name ?: "" }
 
     val cities = repo.savedCities

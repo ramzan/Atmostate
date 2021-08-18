@@ -51,6 +51,22 @@ cur.execute('''CREATE TABLE cities(
                 FOREIGN KEY (stateId) REFERENCES states (id),
                 FOREIGN KEY (countryId) REFERENCES countries (id))''')
 
+cur.execute('''CREATE TABLE saved_cities(
+                id INTEGER NOT NULL PRIMARY KEY,
+                selected INTEGER NOT NULL,
+                FOREIGN KEY (id) REFERENCES cities (id))''')
+
+# Fake city for current location
+cur.execute(
+    "INSERT INTO cities VALUES (?, ?, ?, ?, ?, ?)",
+    (0, "", None, None, -1.0, -1.0)
+)
+
+cur.execute(
+    "INSERT INTO saved_cities VALUES (?, ?)",
+    (0, True)
+)
+
 country_names = {}
 
 with open('countries.csv', 'r') as fin:

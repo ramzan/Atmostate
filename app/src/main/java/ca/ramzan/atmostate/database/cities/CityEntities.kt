@@ -64,7 +64,7 @@ data class DbCountry(
     val name: String
 )
 
-data class DbCoord(
+data class Coord(
     val lat: Double,
     val lon: Double
 )

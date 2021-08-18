@@ -14,17 +14,6 @@ interface CityDatabaseDao {
         FROM cities
         LEFT JOIN states ON cities.stateId == states.id
         LEFT JOIN countries ON cities.countryId == countries.id
-        ORDER BY cities.name COLLATE NOCASE
-    """
-    )
-    fun getAllCities(): Flow<List<DbCityName>>
-
-    @Query(
-        """
-        SELECT cities.id, cities.name AS city, states.name AS state, countries.name AS country
-        FROM cities
-        LEFT JOIN states ON cities.stateId == states.id
-        LEFT JOIN countries ON cities.countryId == countries.id
         WHERE countries.id = :countryId
         ORDER BY cities.name COLLATE NOCASE
     """
@@ -46,6 +35,7 @@ interface CityDatabaseDao {
         LEFT JOIN cities ON saved_cities.id == cities.id
         LEFT JOIN states ON cities.stateId == states.id
         LEFT JOIN countries ON cities.countryId == countries.id
+        WHERE saved_cities.id != 0
         ORDER BY cities.name COLLATE NOCASE
     """
     )
@@ -61,7 +51,7 @@ interface CityDatabaseDao {
     fun insert(city: DbSavedCity)
 
     @Query("SELECT * FROM saved_cities WHERE selected")
-    suspend fun getSelectedCity(): DbSavedCity?
+    suspend fun getSelectedCity(): DbSavedCity
 
     @Query(
         """
@@ -74,17 +64,15 @@ interface CityDatabaseDao {
 
     @Transaction
     suspend fun selectCity(city: DbSavedCity) {
-        getSelectedCity()?.run {
-            insert(copy(selected = false))
-        }
+        insert(getSelectedCity().copy(selected = false))
         insert(city.copy(selected = true))
     }
 
     @Query("SELECT lat, lon from cities where id = :cityId")
-    suspend fun getCoordinates(cityId: Long): DbCoord
+    suspend fun getCoordinates(cityId: Long): Coord
 
     @Query("SELECT * FROM saved_cities WHERE id == :id")
-    suspend fun getCity(id: Long): DbSavedCity
+    suspend fun getSavedCity(id: Long): DbSavedCity
 
     @Query("SELECT * FROM saved_cities WHERE id = :id")
     suspend fun isCitySaved(id: Long): DbSavedCity?

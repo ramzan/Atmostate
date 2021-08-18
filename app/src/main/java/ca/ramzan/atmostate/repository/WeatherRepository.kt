@@ -6,6 +6,7 @@ import ca.ramzan.atmostate.database.cities.DbSavedCity
 import ca.ramzan.atmostate.database.cities.asDomainModel
 import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
+import ca.ramzan.atmostate.ui.LocationManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -15,14 +16,28 @@ import kotlinx.coroutines.launch
 sealed class RefreshState {
     object Loading : RefreshState()
     object Loaded : RefreshState()
-    data class Error(val error: String) : RefreshState()
+    object PermissionError : RefreshState()
+    data class Error(val message: String) : RefreshState()
 }
+
+const val USER_LOCATION_CITY_ID = 0L
 
 class WeatherRepository(
     private val weatherDb: WeatherDatabaseDao,
     private val cityDb: CityDatabaseDao,
-    private val api: WeatherApi
+    private val api: WeatherApi,
+    private val lm: LocationManager
 ) {
+
+    fun removeUserLocation() {
+        CoroutineScope(Dispatchers.IO).launch {
+            weatherDb.clearForecast(USER_LOCATION_CITY_ID)
+        }
+    }
+
+    fun onPermissionGranted() {
+        getWeather(USER_LOCATION_CITY_ID)
+    }
 
     val currentForecast =
         weatherDb.getCurrentForecast().map {
@@ -46,36 +61,48 @@ class WeatherRepository(
         cityDb.getSelectedCityFlow().stateIn(CoroutineScope(Dispatchers.IO), Eagerly, null)
 
     init {
-        CoroutineScope(Dispatchers.Default).launch {
-            cityDb.getSavedCityIds().forEach { getWeather(it) }
-        }
+        refreshSelectedCity()
     }
 
-    suspend fun refreshSelectedCity() {
-        currentCity.value?.run {
-            getWeather(id)
-        }
-    }
-
-    private suspend fun getWeather(cityId: Long) {
+    fun refreshSelectedCity() {
         CoroutineScope(Dispatchers.IO).launch {
+            getWeather(cityDb.getSelectedCity().id)
+        }
+    }
+
+    private fun getWeather(cityId: Long) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val (lat, lon) = if (cityId == USER_LOCATION_CITY_ID) {
+                if (!lm.hasPermission()) {
+                    Log.d("getWeather", "Skip refresh $cityId: user location not set")
+                    _refreshState.emit(RefreshState.PermissionError)
+                    removeUserLocation()
+                    return@launch
+                }
+                lm.getLocation() ?: run {
+                    Log.d("getWeather", "Skip refresh $cityId: user location unavailable")
+                    _refreshState.emit(RefreshState.Error("Location unavailable"))
+                    return@launch
+                }
+            } else {
+                cityDb.getCoordinates(cityId)
+            }
             val lastRefresh = weatherDb.lastUpdated(cityId)
             if (lastRefresh != null && (System.currentTimeMillis() - lastRefresh * 1000 < 600000)) {
-                Log.d("getWeather", "Skip refresh")
+                Log.d("getWeather", "Skip refresh $cityId: refreshed < ten minutes ago")
+                _refreshState.emit(RefreshState.Loaded)
                 return@launch
             }
+            Log.d("getWeather", "Refreshing $cityId")
             _refreshState.emit(RefreshState.Loading)
-            Log.d("getWeather", "Refreshing")
-            val (lat, lon) = cityDb.getCoordinates(cityId)
             api.getForecast(lat, lon).run {
                 when (this) {
                     is WeatherResult.Failure -> {
-                        Log.d("getWeather", "Fail")
-                        Log.d("getWeather", error)
-                        _refreshState.emit(RefreshState.Error(this.error))
+                        Log.e("getWeather", "Fail $cityId: $error")
+                        _refreshState.emit(RefreshState.Error(error))
                     }
                     is WeatherResult.Success -> {
-                        Log.d("getWeather", "Success")
+                        Log.d("getWeather", "Success $cityId")
                         this.run {
                             weatherDb.saveForecast(
                                 cityId,
@@ -94,7 +121,7 @@ class WeatherRepository(
 
     fun setCurrentCity(cityId: Long) {
         CoroutineScope(Dispatchers.IO).launch {
-            cityDb.selectCity(cityDb.getCity(cityId))
+            cityDb.selectCity(cityDb.getSavedCity(cityId))
             getWeather(cityId)
         }
     }
@@ -134,6 +161,6 @@ class WeatherRepository(
 
     suspend fun getAllCountries() = cityDb.getAllCountries()
 
-    private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loaded)
+    private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loading)
     val refreshState: StateFlow<RefreshState> get() = _refreshState
 }
