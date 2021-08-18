@@ -146,7 +146,10 @@ fun Forecast(
             HorizontalPager(state = pagerState) { page ->
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(refreshState.value == RefreshState.Loading),
-                    onRefresh = { vm.refresh() }
+                    onRefresh = {
+                        vm.refresh()
+                        showErrorMessage(refreshState.value, scope, scaffoldState)
+                    }
                 ) {
                     if (currentCityName.value.isEmpty() && refreshState.value == RefreshState.PermissionError) {
                         LocationRequestScreen(
@@ -172,6 +175,24 @@ fun Forecast(
         },
         backgroundColor = Orange100,
     )
+    showErrorMessage(refreshState.value, scope, scaffoldState)
+}
+
+fun showErrorMessage(
+    refreshState: RefreshState,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState
+) {
+    (refreshState as? RefreshState.Error)?.run {
+        scope.launch {
+            scaffoldState.snackbarHostState.run {
+                // Prevent duplicate snackbars when loading multiple cities
+                if (currentSnackbarData?.message != message) {
+                    showSnackbar(message)
+                }
+            }
+        }
+    }
 }
 
 @ExperimentalPagerApi

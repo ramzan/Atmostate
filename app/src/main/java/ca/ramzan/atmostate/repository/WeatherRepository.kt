@@ -88,7 +88,7 @@ class WeatherRepository(
                 }
                 lm.getLocation() ?: run {
                     Log.d("getWeather", "Skip refresh $cityId: user location unavailable")
-                    _refreshState.emit(RefreshState.Error("Location unavailable"))
+                    _refreshState.emit(RefreshState.Error("Location is unavailable. Please ensure that location is enabled in your device settings."))
                     return@launch
                 }
             } else {
@@ -106,7 +106,7 @@ class WeatherRepository(
                 when (this) {
                     is WeatherResult.Failure -> {
                         Log.e("getWeather", "Fail $cityId: $error")
-                        _refreshState.emit(RefreshState.Error(error))
+                        _refreshState.emit(RefreshState.Error("A network error occurred. Please try again later."))
                     }
                     is WeatherResult.Success -> {
                         Log.d("getWeather", "Success $cityId")
