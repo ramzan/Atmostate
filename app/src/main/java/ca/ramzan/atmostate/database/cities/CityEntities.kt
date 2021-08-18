@@ -81,7 +81,6 @@ data class DbCityName(
     val id: Long,
     val city: String,
     val state: String?,
-    val country: String?,
 )
 
 fun List<DbSavedCityName>.asDomainModel(): List<SavedCity> {
@@ -100,7 +99,7 @@ fun List<DbCityName>.asDomainModel(saved: List<Long>): List<CitySearchResult> {
     return map { c ->
         CitySearchResult(
             c.id,
-            "${c.city}${c.state?.let { ", $it" } ?: ""}${c.country?.let { ", $it" } ?: ""}",
+            "${c.city}${c.state?.let { ", $it" } ?: ""}",
             saved.binarySearch(c.id) >= 0
         )
     }

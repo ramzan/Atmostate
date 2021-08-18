@@ -10,11 +10,10 @@ interface CityDatabaseDao {
 
     @Query(
         """
-        SELECT cities.id, cities.name AS city, states.name AS state, countries.name AS country
+        SELECT cities.id, cities.name AS city, states.name AS state
         FROM cities
         LEFT JOIN states ON cities.stateId == states.id
-        LEFT JOIN countries ON cities.countryId == countries.id
-        WHERE countries.id = :countryId
+        WHERE cities.countryId = :countryId
         ORDER BY cities.name COLLATE NOCASE
     """
     )
