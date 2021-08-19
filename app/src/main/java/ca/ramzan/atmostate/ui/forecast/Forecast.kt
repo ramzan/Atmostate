@@ -149,8 +149,8 @@ fun Forecast(
                 SwipeRefresh(
                     state = rememberSwipeRefreshState(refreshState.value == RefreshState.Loading),
                     onRefresh = {
+                        setErrorShown(false)
                         vm.refresh()
-                        showErrorMessage(refreshState.value, scope, scaffoldState)
                     }
                 ) {
                     if (currentCityName.value.isEmpty() && refreshState.value == RefreshState.PermissionError) {
