@@ -1,5 +1,7 @@
 package ca.ramzan.atmostate.ui.city_select
 
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,13 +12,16 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ca.ramzan.atmostate.domain.Country
@@ -34,36 +39,41 @@ fun CitySelect(
     val query = vm.query.collectAsState()
     val selectedIndex = vm.countryIndex.collectAsState()
 
-    val (expanded, setExpanded) = remember { mutableStateOf(false) }
+    val (expanded, setExpanded) = rememberSaveable { mutableStateOf(false) }
 
+    if (expanded) {
+        BackHandler(onBack = { setExpanded(false) })
+        CountrySelector(
+            countries.value,
+            selectedIndex.value,
+            vm::selectCountry,
+            setExpanded
+        )
+        return
+    }
     Scaffold(
         topBar = { CitySelectAppBar(navController::navigateUp) },
         content = {
-            if (expanded) {
-                CountrySelector(
-                    countries.value,
-                    selectedIndex.value,
-                    vm::selectCountry,
-                    setExpanded
-                )
-                return@Scaffold
-            }
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
             ) {
                 stickyHeader {
                     Column(Modifier.fillMaxWidth()) {
-                        Text(
-                            countries.value[selectedIndex.value].name,
+                        Row(
+                            horizontalArrangement = Arrangement.SpaceBetween,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable(onClick = { setExpanded(true) })
-                                .background(
-                                    MaterialTheme.colors.primaryVariant
-                                )
+                                .background(MaterialTheme.colors.primaryVariant)
                                 .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
+                        ) {
+                            Text(countries.value[selectedIndex.value].name)
+                            Icon(
+                                Icons.Filled.ArrowDropDown,
+                                contentDescription = "Choose country",
+                            )
+                        }
                         SearchBox(query.value, vm::setQuery)
                     }
                 }
@@ -172,6 +182,27 @@ fun CountrySelector(
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .fillMaxWidth()
             )
+        }
+    }
+}
+
+@Composable
+fun BackHandler(onBack: () -> Unit) {
+    val backDispatcher =
+        LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher ?: return
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val currentOnBack by rememberUpdatedState(onBack)
+    val backCallback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() = currentOnBack()
+        }
+    }
+    backCallback.isEnabled = true
+
+    DisposableEffect(lifecycleOwner, backDispatcher) {
+        backDispatcher.addCallback(lifecycleOwner, backCallback)
+        onDispose {
+            backCallback.remove()
         }
     }
 }
