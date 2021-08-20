@@ -11,6 +11,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
@@ -106,48 +107,26 @@ fun Forecast(
         },
         drawerContent = {
             LazyColumn(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colors.background)
             ) {
                 item {
-                    Text(
-                        text = "Your location",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable {
-                                vm.setCurrentCity(USER_LOCATION_CITY_ID)
-                                scope.launch { scaffoldState.drawerState.close() }
-                            }
-                            .background(
-                                if (currentCityName.value.isEmpty()) {
-                                    MaterialTheme.colors.primaryVariant
-                                } else MaterialTheme.colors.surface
-                            )
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
+                    DrawerItem(text = "Your location", selected = currentCityName.value.isEmpty()) {
+                        vm.setCurrentCity(USER_LOCATION_CITY_ID)
+                        scope.launch { scaffoldState.drawerState.close() }
+                    }
                 }
-                cities.value.forEach { city ->
-                    item {
-                        Text(
-                            text = city.name,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    vm.setCurrentCity(city.id)
-                                    scope.launch { scaffoldState.drawerState.close() }
-                                }
-                                .background(if (city.selected) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.surface)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
+                items(cities.value) { city ->
+                    DrawerItem(text = city.name, selected = city.selected) {
+                        vm.setCurrentCity(city.id)
+                        scope.launch { scaffoldState.drawerState.close() }
                     }
                 }
                 item {
-                    Text(
-                        text = "+ Add location",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable { navController.navigate(MainDestinations.CITY_SELECT_ROUTE) }
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
+                    DrawerItem(text = "+ Add location", selected = false) {
+                        navController.navigate(MainDestinations.CITY_SELECT_ROUTE)
+                    }
                 }
             }
         },
@@ -222,6 +201,7 @@ fun ForecastAppBar(
     Column {
         TopAppBar(
             title = { Text(if (currentCityName.isEmpty()) "Your location" else currentCityName) },
+            backgroundColor = MaterialTheme.colors.primary,
             navigationIcon = {
                 IconButton(onClick = { openDrawer() }) {
                     Icon(Icons.Filled.Menu, contentDescription = "Menu")
@@ -382,5 +362,19 @@ fun showSourceCode(context: Context) {
         context,
         Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ramzan/Atmostate")),
         null
+    )
+}
+
+@Composable
+fun DrawerItem(text: String, selected: Boolean, onClick: () -> Unit) {
+    Text(
+        text = text,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                onClick()
+            }
+            .background(if (selected) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.background)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     )
 }

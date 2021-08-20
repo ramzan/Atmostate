@@ -58,20 +58,26 @@ fun CitySelect(
             ) {
                 stickyHeader {
                     Column(Modifier.fillMaxWidth()) {
-                        Row(
-                            horizontalArrangement = Arrangement.SpaceBetween,
+                        OutlinedTextField(
+                            value = countries.value[selectedIndex.value].name,
+                            readOnly = true,
+                            onValueChange = {},
+                            label = { Text("Country") },
+                            trailingIcon = {
+                                Icon(
+                                    Icons.Filled.ArrowDropDown,
+                                    contentDescription = "Choose country",
+                                    modifier = Modifier
+                                        .clickable(onClick = { setExpanded(true) })
+                                )
+                            },
+                            colors = TextFieldDefaults.outlinedTextFieldColors(
+                                focusedLabelColor = MaterialTheme.colors.onSurface.copy(ContentAlpha.medium)
+                            ),
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable(onClick = { setExpanded(true) })
-                                .background(MaterialTheme.colors.primaryVariant)
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        ) {
-                            Text(countries.value[selectedIndex.value].name)
-                            Icon(
-                                Icons.Filled.ArrowDropDown,
-                                contentDescription = "Choose country",
-                            )
-                        }
+                                .padding(16.dp)
+                        )
                         SearchBox(query.value, vm::setQuery)
                     }
                 }
@@ -146,6 +152,7 @@ fun SearchBox(query: String, setQuery: (String) -> Unit) {
         modifier = Modifier
             .fillMaxWidth()
             .background(MaterialTheme.colors.surface)
+            .padding(horizontal = 16.dp)
             .focusRequester(requester)
     )
     SideEffect {
@@ -166,9 +173,10 @@ fun CountrySelector(
         itemsIndexed(items = countries) { i, country ->
             Text(
                 text = country.name,
+                color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .background(
-                        if (i == selectedIndex) MaterialTheme.colors.primaryVariant
+                        if (i == selectedIndex) MaterialTheme.colors.primary
                         else MaterialTheme.colors.surface
                     )
                     .clickable {

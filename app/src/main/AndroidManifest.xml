@@ -18,7 +18,7 @@
             android:name="ca.ramzan.atmostate.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Atmostate.NoActionBar">
+            android:theme="@style/Theme.Atmostate">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

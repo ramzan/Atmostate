@@ -1,11 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="orange_100">#FFECB3</color>
     <color name="orange_200">#FFE082</color>
-    <color name="orange_500">#FFC107</color>
     <color name="orange_700">#FFA000</color>
-    <color name="lime_200">#C5E1A5</color>
-    <color name="lime_700">#689F38</color>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="blue900">#FF1A237E</color>
+    <color name="icon_color">#000</color>
 </resources>

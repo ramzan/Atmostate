@@ -16,13 +16,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.ramzan.atmostate.domain.Hourly
-import ca.ramzan.atmostate.ui.theme.Lime200
-import ca.ramzan.atmostate.ui.theme.Orange500
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
 
@@ -53,7 +50,7 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { setExpanded(!expanded) }
-                            .background(MaterialTheme.colors.primary.copy(alpha))
+                            .background(MaterialTheme.colors.primaryVariant.copy(alpha))
                             .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 14.dp),
                     ) {
                         Row(
