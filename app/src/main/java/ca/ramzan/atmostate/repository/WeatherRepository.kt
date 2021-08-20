@@ -36,7 +36,7 @@ class WeatherRepository(
     private val prefs: DataStore<Preferences>
 ) {
 
-    fun removeUserLocation() {
+    private fun removeUserLocation() {
         CoroutineScope(Dispatchers.IO).launch {
             weatherDb.clearForecast(USER_LOCATION_CITY_ID)
         }

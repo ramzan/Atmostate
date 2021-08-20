@@ -19,8 +19,4 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="Theme.Atmostate.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="Theme.Atmostate.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>
