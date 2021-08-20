@@ -29,17 +29,16 @@ import com.ramzan.atmostate.R
 @ExperimentalAnimationApi
 @Composable
 fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
+    if (hourly.isEmpty()) {
+        NoDataMessage(message = "Sorry, the hourly forecast is unavailable at this time. Please try again later.")
+        return
+    }
     LazyColumn(
         state = listState,
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .fillMaxSize()
     ) {
-        if (hourly.isEmpty()) {
-            item {
-                Text(text = "No data", modifier = Modifier.fillMaxSize())
-            }
-        }
         hourly.forEachIndexed { i, hour ->
             hour.run {
                 if (TimeFormatter.isMidnight(hour.time)) {

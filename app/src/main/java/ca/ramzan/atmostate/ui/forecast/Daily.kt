@@ -30,16 +30,15 @@ import com.ramzan.atmostate.R
 @ExperimentalFoundationApi
 @Composable
 fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
+    if (daily.isEmpty()) {
+        NoDataMessage(message = "Sorry, the daily forecast is unavailable at this time. Please try again later.")
+        return
+    }
     LazyColumn(
         state = listState,
         modifier = Modifier
             .fillMaxSize()
     ) {
-        if (daily.isEmpty()) {
-            item {
-                Text(text = "No data", modifier = Modifier.fillMaxSize())
-            }
-        }
         daily.forEachIndexed { i, daily ->
             stickyHeader {
                 Text(

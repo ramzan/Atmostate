@@ -25,6 +25,11 @@ private val gridPadding = 24.dp
 
 @Composable
 fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Alert>) {
+    if (current == null) {
+        NoDataMessage(message = "Sorry, the current conditions are unavailable at this time. Please try again later.")
+        return
+    }
+
     LazyColumn(
         state = listState,
         contentPadding = PaddingValues(16.dp),
@@ -32,12 +37,6 @@ fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Al
         modifier = Modifier
             .fillMaxSize()
     ) {
-        if (current == null) {
-            item {
-                Text(text = "No data", modifier = Modifier.fillMaxSize())
-            }
-            return@LazyColumn
-        }
         current.run {
             item { TimeUpdated(lastUpdated) }
             item {

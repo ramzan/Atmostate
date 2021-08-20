@@ -170,6 +170,8 @@ fun Forecast(
                             vm::onPermissionGranted,
                             hideRationale.value
                         )
+                    } else if (refreshState.value == RefreshState.Loading && currentForecast.value == null) {
+                        LazyColumn(content = {}, modifier = Modifier.fillMaxSize())
                     } else {
                         when (page) {
                             0 -> CurrentForecast(
