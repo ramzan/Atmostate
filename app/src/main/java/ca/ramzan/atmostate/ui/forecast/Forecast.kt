@@ -34,8 +34,6 @@ import ca.ramzan.atmostate.ForecastViewModel
 import ca.ramzan.atmostate.repository.RefreshState
 import ca.ramzan.atmostate.repository.USER_LOCATION_CITY_ID
 import ca.ramzan.atmostate.ui.MainDestinations
-import ca.ramzan.atmostate.ui.theme.Orange100
-import ca.ramzan.atmostate.ui.theme.Orange500
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
@@ -185,8 +183,7 @@ fun Forecast(
                     }
                 }
             }
-        },
-        backgroundColor = Orange100,
+        }
     )
     if (!errorShown) {
         setErrorShown(showErrorMessage(refreshState.value, scope, scaffoldState))
@@ -225,7 +222,6 @@ fun ForecastAppBar(
     Column {
         TopAppBar(
             title = { Text(if (currentCityName.isEmpty()) "Your location" else currentCityName) },
-            backgroundColor = Orange500,
             navigationIcon = {
                 IconButton(onClick = { openDrawer() }) {
                     Icon(Icons.Filled.Menu, contentDescription = "Menu")

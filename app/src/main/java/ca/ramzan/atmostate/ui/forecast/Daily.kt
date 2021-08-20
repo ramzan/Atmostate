@@ -22,7 +22,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.ramzan.atmostate.domain.Daily
-import ca.ramzan.atmostate.ui.theme.Lime200
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
 
@@ -41,14 +40,7 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
     ) {
         daily.forEachIndexed { i, daily ->
             stickyHeader {
-                Text(
-                    text = TimeFormatter.toWeekDay(daily.date),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .background(Lime200, RectangleShape)
-                        .padding(horizontal = 16.dp, vertical = 4.dp),
-                    style = MaterialTheme.typography.subtitle1
-                )
+                StickyListHeader(text = TimeFormatter.toWeekDay(daily.date))
             }
             item {
                 val (expanded, setExpanded) = rememberSaveable(daily) { mutableStateOf(i == 0) }

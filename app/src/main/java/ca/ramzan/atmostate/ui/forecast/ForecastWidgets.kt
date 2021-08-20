@@ -1,16 +1,15 @@
 package ca.ramzan.atmostate.ui.forecast
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -74,4 +73,16 @@ fun NoDataMessage(message: String) {
             )
         }
     }
+}
+
+@Composable
+fun StickyListHeader(text: String) {
+    Text(
+        text = text,
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(MaterialTheme.colors.secondary, RectangleShape)
+            .padding(horizontal = 16.dp, vertical = 4.dp),
+        style = MaterialTheme.typography.subtitle1
+    )
 }

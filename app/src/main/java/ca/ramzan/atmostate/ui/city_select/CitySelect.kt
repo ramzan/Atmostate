@@ -25,8 +25,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ca.ramzan.atmostate.domain.Country
-import ca.ramzan.atmostate.ui.theme.Orange100
-import ca.ramzan.atmostate.ui.theme.Orange500
 
 @ExperimentalFoundationApi
 @Composable
@@ -107,8 +105,7 @@ fun CitySelect(
                     }
                 }
             }
-        },
-        backgroundColor = Orange100,
+        }
     )
 }
 
@@ -119,7 +116,6 @@ fun CitySelectAppBar(onBackPress: () -> Boolean) {
             title = {
                 Text("Select location")
             },
-            backgroundColor = Orange500,
             navigationIcon = {
                 IconButton(onClick = { onBackPress() }) {
                     Icon(Icons.Filled.ArrowBack, contentDescription = "Go back")

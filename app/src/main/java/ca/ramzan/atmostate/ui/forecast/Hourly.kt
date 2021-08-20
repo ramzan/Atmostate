@@ -43,14 +43,7 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
             hour.run {
                 if (TimeFormatter.isMidnight(hour.time)) {
                     stickyHeader {
-                        Text(
-                            text = TimeFormatter.toWeekDay(hour.time),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .background(Lime200, RectangleShape)
-                                .padding(horizontal = 16.dp, vertical = 4.dp),
-                            style = MaterialTheme.typography.subtitle1
-                        )
+                        StickyListHeader(text = TimeFormatter.toWeekDay(hour.time))
                     }
                 }
                 item {
@@ -60,7 +53,7 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { setExpanded(!expanded) }
-                            .background(Orange500.copy(alpha))
+                            .background(MaterialTheme.colors.primary.copy(alpha))
                             .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 14.dp),
                     ) {
                         Row(
