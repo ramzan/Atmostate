@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.ramzan.atmostate.domain.Hourly
 import ca.ramzan.atmostate.ui.theme.Lime200
+import ca.ramzan.atmostate.ui.theme.Orange500
 import coil.compose.rememberImagePainter
 import com.ramzan.atmostate.R
 
@@ -35,7 +36,6 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
     }
     LazyColumn(
         state = listState,
-        verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = Modifier
             .fillMaxSize()
     ) {
@@ -60,7 +60,8 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                         modifier = Modifier
                             .fillMaxWidth()
                             .clickable { setExpanded(!expanded) }
-                            .padding(16.dp, 8.dp, 16.dp, 12.dp),
+                            .background(Orange500.copy(alpha))
+                            .padding(start = 16.dp, top = 10.dp, end = 16.dp, bottom = 14.dp),
                     ) {
                         Row(
                             modifier = Modifier
@@ -68,7 +69,7 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.SpaceBetween,
                         ) {
-                            Text(TimeFormatter.toHourOfDay(time))
+                            Text(TimeFormatter.toHourOfDay(time), modifier = Modifier.weight(1.0f))
                             Column {
                                 Row(verticalAlignment = Alignment.Bottom) {
                                     Image(
@@ -82,7 +83,8 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                             }
 
                             Column(
-                                horizontalAlignment = Alignment.End
+                                horizontalAlignment = Alignment.End,
+                                modifier = Modifier.weight(1.0f)
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,

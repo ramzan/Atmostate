@@ -2,6 +2,7 @@ package ca.ramzan.atmostate.ui.forecast
 
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import kotlin.math.abs
 
 object TimeFormatter {
     private val dayHourFormatter = DateTimeFormatter.ofPattern("HH:mm")
@@ -16,6 +17,10 @@ object TimeFormatter {
     fun toHourOfDay(time: ZonedDateTime): String = clockHourOfDayFormatter.format(time)
 
     fun isMidnight(time: ZonedDateTime): Boolean = hourOfDayFormatter.format(time).equals("0")
+
+    fun timeToAlpha(time: ZonedDateTime): Float {
+        return abs(12 - hourOfDayFormatter.format(time).toFloat()) / 12 * 0.5f
+    }
 
     fun toWeekDay(time: ZonedDateTime): String = weekDayFormatter.format(time)
 }

@@ -32,7 +32,8 @@ data class Hourly(
     val rain: Double?,
     val snow: Double?,
     val icon: String,
-    val description: String
+    val description: String,
+    val alpha: Float
 )
 
 data class Daily(

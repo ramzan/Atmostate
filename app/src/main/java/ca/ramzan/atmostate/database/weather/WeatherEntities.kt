@@ -6,6 +6,7 @@ import ca.ramzan.atmostate.domain.Alert
 import ca.ramzan.atmostate.domain.Current
 import ca.ramzan.atmostate.domain.Daily
 import ca.ramzan.atmostate.domain.Hourly
+import ca.ramzan.atmostate.ui.forecast.TimeFormatter
 import java.time.Instant
 import java.time.ZoneId
 
@@ -111,8 +112,9 @@ fun DbCurrent.asDomainModel(): Current {
 fun List<DbHourly>.asDomainModel(): List<Hourly> {
     return map { hourly ->
         hourly.run {
+            val time = Instant.ofEpochSecond(date).atZone(ZoneId.of(tz))
             Hourly(
-                time = Instant.ofEpochSecond(date).atZone(ZoneId.of(tz)),
+                time,
                 temp,
                 feelsLike,
                 windSpeed,
@@ -122,7 +124,8 @@ fun List<DbHourly>.asDomainModel(): List<Hourly> {
                 rain,
                 snow,
                 icon,
-                description
+                description,
+                TimeFormatter.timeToAlpha(time)
             )
         }
     }
@@ -160,7 +163,7 @@ fun List<DbDaily>.asDomainModel(): List<Daily> {
 
 @JvmName("asDomainModelDbAlert")
 fun List<DbAlert>.asDomainModel(): List<Alert> {
-    return mapIndexed { i, alert ->
+    return map { alert ->
         alert.run {
             Alert(
                 senderName = senderName,
