@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
@@ -90,12 +91,20 @@ fun Forecast(
         topBar = {
             ForecastAppBar(
                 pagerState,
-                if (currentCityName.value.isEmpty()) "Your location" else currentCityName.value
-            ) {
-                scope.launch {
-                    scaffoldState.drawerState.open()
-                }
-            }
+                currentCityName.value,
+                {
+                    scope.launch {
+                        scaffoldState.drawerState.open()
+                    }
+                },
+                {
+                    scope.launch {
+                        vm.removeCurrentCity()
+                        scaffoldState.snackbarHostState.showSnackbar("Location removed")
+                    }
+                },
+                { showSourceCode(context) }
+            )
         },
         drawerContent = {
             LazyColumn(
@@ -202,15 +211,46 @@ fun showErrorMessage(
 
 @ExperimentalPagerApi
 @Composable
-fun ForecastAppBar(pagerState: PagerState, currentCityName: String, openDrawer: () -> Unit) {
+fun ForecastAppBar(
+    pagerState: PagerState,
+    currentCityName: String,
+    openDrawer: () -> Unit,
+    removeLocation: () -> Unit,
+    showSource: () -> Unit
+) {
+    val (showMenu, setShowMenu) = rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
     Column {
         TopAppBar(
-            title = { Text(currentCityName) },
+            title = { Text(if (currentCityName.isEmpty()) "Your location" else currentCityName) },
             backgroundColor = Orange500,
             navigationIcon = {
                 IconButton(onClick = { openDrawer() }) {
                     Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                }
+            },
+            actions = {
+                IconButton(onClick = { setShowMenu(true) }) {
+                    Icon(Icons.Filled.MoreVert, contentDescription = "Menu")
+                }
+                DropdownMenu(
+                    expanded = showMenu,
+                    onDismissRequest = { setShowMenu(false) }
+                ) {
+                    if (currentCityName.isNotEmpty()) {
+                        DropdownMenuItem(onClick = {
+                            removeLocation()
+                            setShowMenu(false)
+                        }) {
+                            Text("Remove location")
+                        }
+                    }
+                    DropdownMenuItem(onClick = {
+                        showSource()
+                        setShowMenu(false)
+                    }) {
+                        Text("Source code")
+                    }
                 }
             }
         )
@@ -337,4 +377,12 @@ fun setLocationRationaleHidden(scope: CoroutineScope, context: Context) {
             it[HIDE_LOCATION_RATIONALE] = true
         }
     }
+}
+
+fun showSourceCode(context: Context) {
+    startActivity(
+        context,
+        Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ramzan/Atmostate")),
+        null
+    )
 }

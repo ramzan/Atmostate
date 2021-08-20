@@ -81,7 +81,7 @@ class WeatherRepository(
         CoroutineScope(Dispatchers.IO).launch {
             val (lat, lon) = if (cityId == USER_LOCATION_CITY_ID) {
                 if (!lm.hasPermission()) {
-                    Log.d("getWeather", "Skip refresh $cityId: user location not set")
+                    Log.d("getWeather", "Skip refresh $cityId: location permission not granted")
                     _refreshState.emit(RefreshState.PermissionError)
                     removeUserLocation()
                     return@launch
@@ -170,6 +170,12 @@ class WeatherRepository(
     }
 
     suspend fun getAllCountries() = cityDb.getAllCountries()
+
+    fun removeCurrentCity() {
+        CoroutineScope(Dispatchers.IO).launch {
+            removeCity(cityDb.getSelectedCity().id)
+        }
+    }
 
     private val _refreshState = MutableStateFlow<RefreshState>(RefreshState.Loading)
     val refreshState: StateFlow<RefreshState> get() = _refreshState
