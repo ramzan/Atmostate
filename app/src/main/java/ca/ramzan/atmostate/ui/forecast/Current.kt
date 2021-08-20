@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -229,16 +231,25 @@ fun Sunset(sunset: ZonedDateTime) {
 
 @Composable
 fun Alert(alert: Alert) {
+    val caption = MaterialTheme.typography.caption
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.error)
+            .background(MaterialTheme.colors.error, RoundedCornerShape(16.dp))
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
-        Text(text = alert.event)
-        Text(text = "Start: ${TimeFormatter.toDate(alert.start)}")
-        Text(text = "End: ${TimeFormatter.toDate(alert.end)}")
-        Text(text = alert.senderName)
-        Text(text = alert.description)
+        Text(text = alert.event, style = MaterialTheme.typography.subtitle2)
+        Text(text = "Start: ${TimeFormatter.toDate(alert.start)}", style = caption)
+        Text(text = "End: ${TimeFormatter.toDate(alert.end)}", style = caption)
+        Row {
+            Text(text = "Issued by: ", style = caption)
+            Text(text = alert.senderName, fontWeight = FontWeight.SemiBold, style = caption)
+        }
+        Divider(
+            color = MaterialTheme.colors.onBackground,
+            thickness = 1.dp,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        Text(text = alert.description, style = MaterialTheme.typography.body2)
     }
 }

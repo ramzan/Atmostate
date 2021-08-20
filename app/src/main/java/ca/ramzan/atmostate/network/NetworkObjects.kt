@@ -209,7 +209,7 @@ fun List<NetworkAlert>?.asDatabaseModel(cityId: Long, tz: String): List<DbAlert>
                 alertId = i.toLong(),
                 tz = tz,
                 senderName = senderName,
-                event = event,
+                event = event.capitalized(),
                 start = start,
                 end = end,
                 description = description,
