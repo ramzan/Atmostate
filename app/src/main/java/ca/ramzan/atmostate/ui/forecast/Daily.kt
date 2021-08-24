@@ -4,19 +4,16 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -60,7 +57,7 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                             Column {
                                 Text(
                                     text = description,
-                                    fontWeight = FontWeight.SemiBold
+                                    fontWeight = FontWeight.Normal
                                 )
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
@@ -140,23 +137,17 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                                         .fillMaxWidth()
                                         .padding(top = 16.dp)
                                 ) {
-                                    Column {
-                                        Text(text = "Morning: ", fontWeight = FontWeight.Bold)
-                                        Text(text = "Day: ", fontWeight = FontWeight.Bold)
-                                        Text(text = "Evening: ", fontWeight = FontWeight.Bold)
-                                        Text(text = "Night: ", fontWeight = FontWeight.Bold)
+                                    Column(modifier = Modifier.padding(end = 16.dp)) {
+                                        Text("Morning")
+                                        Text("Day")
+                                        Text("Evening")
+                                        Text("Night")
                                     }
                                     Column {
-                                        Text(text = "${tempMorn}°")
-                                        Text(text = "${tempDay}°")
-                                        Text(text = "${tempEve}°")
-                                        Text(text = "${tempNight}°")
-                                    }
-                                    Column {
-                                        Text(text = " Feels like $feelsLikeMorn")
-                                        Text(text = " Feels like $feelsLikeDay")
-                                        Text(text = " Feels like $feelsLikeEve")
-                                        Text(text = " Feels like $feelsLikeNight")
+                                        DailyTemp(tempMorn, feelsLikeMorn)
+                                        DailyTemp(tempDay, feelsLikeDay)
+                                        DailyTemp(tempEve, feelsLikeEve)
+                                        DailyTemp(tempNight, feelsLikeNight)
                                     }
                                 }
                             }
@@ -166,4 +157,9 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
             }
         }
     }
+}
+
+@Composable
+fun DailyTemp(temp: Int, feelsLike: Int?) {
+    Text("${temp}°C feels like ${feelsLike ?: temp}")
 }
