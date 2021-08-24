@@ -111,7 +111,7 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                                 description,
                                 windSpeed,
                                 windGust,
-                                degreeToDirection(windDeg)
+                                windDirection
                             )
                         }
                     }

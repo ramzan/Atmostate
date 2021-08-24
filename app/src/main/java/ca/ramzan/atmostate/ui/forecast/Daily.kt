@@ -123,7 +123,7 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                                             text = stringResource(
                                                 R.string.wind_speed,
                                                 windSpeed,
-                                                degreeToDirection(windDeg)
+                                                windDirection
                                             )
                                         )
                                         Text(text = stringResource(R.string.wind))

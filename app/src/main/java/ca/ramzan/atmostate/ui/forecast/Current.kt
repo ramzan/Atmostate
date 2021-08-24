@@ -60,7 +60,7 @@ fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Al
                         Wind(
                             windSpeed,
                             windGust,
-                            degreeToDirection(windDeg)
+                            windDirection
                         )
                         Cloudiness(clouds)
                     }
@@ -88,6 +88,17 @@ fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Al
             Alert(alert)
         }
     }
+}
+
+@Composable
+fun TimeUpdated(time: ZonedDateTime) {
+    Text(
+        text = stringResource(
+            com.ramzan.atmostate.R.string.time_updated,
+            TimeFormatter.toDate(time)
+        ),
+        style = MaterialTheme.typography.body2
+    )
 }
 
 @Composable

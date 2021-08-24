@@ -16,21 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ramzan.atmostate.R
-import java.time.ZonedDateTime
-
-val directions = listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW")
-
-fun degreeToDirection(deg: Int): String {
-    return directions[(deg % 360) / 45]
-}
-
-@Composable
-fun TimeUpdated(time: ZonedDateTime) {
-    Text(
-        text = stringResource(R.string.time_updated, TimeFormatter.toDate(time)),
-        style = MaterialTheme.typography.body2
-    )
-}
 
 @Composable
 fun Rain(rain: Double) {

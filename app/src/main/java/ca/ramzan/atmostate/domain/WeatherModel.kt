@@ -16,7 +16,7 @@ data class Current(
     val visibility: Int,
     val windSpeed: Int,
     val windGust: Int,
-    val windDeg: Int,
+    val windDirection: String,
     val icon: String,
     val description: String
 )
@@ -27,7 +27,7 @@ data class Hourly(
     val feelsLike: Int,
     val windSpeed: Int,
     val windGust: Int,
-    val windDeg: Int,
+    val windDirection: String,
     val pop: Int,
     val rain: Double?,
     val snow: Double?,
@@ -51,7 +51,7 @@ data class Daily(
     val humidity: Int,
     val windSpeed: Int,
     val windGust: Int,
-    val windDeg: Int,
+    val windDirection: String,
     val pop: Int,
     val rain: Double?,
     val snow: Double?,

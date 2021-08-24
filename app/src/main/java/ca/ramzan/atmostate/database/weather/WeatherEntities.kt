@@ -88,6 +88,12 @@ data class DbAlert(
     val description: String
 )
 
+val directions by lazy { listOf("N", "NE", "E", "SE", "S", "SW", "W", "NW") }
+
+fun degreeToDirection(deg: Int): String {
+    return directions[(deg % 360) / 45]
+}
+
 fun DbCurrent.asDomainModel(): Current {
     return Current(
         lastUpdated = Instant.ofEpochSecond(date).atZone(ZoneId.of(tz)),
@@ -103,7 +109,7 @@ fun DbCurrent.asDomainModel(): Current {
         visibility,
         windSpeed,
         windGust,
-        windDeg,
+        degreeToDirection(windDeg),
         icon,
         description
     )
@@ -119,7 +125,7 @@ fun List<DbHourly>.asDomainModel(): List<Hourly> {
                 feelsLike,
                 windSpeed,
                 windGust,
-                windDeg,
+                degreeToDirection(windDeg),
                 pop,
                 rain,
                 snow,
@@ -150,7 +156,7 @@ fun List<DbDaily>.asDomainModel(): List<Daily> {
                 humidity,
                 windSpeed,
                 windGust,
-                windDeg,
+                degreeToDirection(windDeg),
                 pop,
                 rain,
                 snow,
