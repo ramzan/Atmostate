@@ -76,7 +76,7 @@ fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Al
                     }
                     GridColumn {
                         Visibility(visibility)
-                        DewPoint("${dewPoint}°C")
+                        DewPoint(dewPoint)
                     }
 
                 }
@@ -109,7 +109,7 @@ fun Weather(description: String, icon: String, temp: Int, feelsLike: Int, uvi: I
         )
         Column {
             Text(
-                text = stringResource(com.ramzan.atmostate.R.string.temperate, temp),
+                text = stringResource(com.ramzan.atmostate.R.string.degrees_unit, temp),
                 style = MaterialTheme.typography.h3
             )
             Text(text = stringResource(com.ramzan.atmostate.R.string.feels_like, feelsLike))
@@ -168,7 +168,7 @@ fun Cloudiness(clouds: Int) {
             text = stringResource(com.ramzan.atmostate.R.string.cloudiness),
             style = TextStyle(fontWeight = FontWeight.Light)
         )
-        Text(text = "$clouds%")
+        Text(text = stringResource(com.ramzan.atmostate.R.string.int_percent, clouds))
     }
 }
 
@@ -179,8 +179,11 @@ fun Visibility(visibility: Int) {
             painter = painterResource(AtmostateR.drawable.telescope),
             contentDescription = null
         )
-        Text(text = "Visibility", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(text = "${visibility}km")
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.visibility),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
+        Text(text = stringResource(com.ramzan.atmostate.R.string.kilometers, visibility))
     }
 }
 
@@ -191,8 +194,11 @@ fun Pressure(pressure: Double) {
             painter = painterResource(AtmostateR.drawable.barometer),
             contentDescription = null
         )
-        Text(text = "Pressure", style = TextStyle(fontWeight = FontWeight.Light))
-        Text("${"%.1f".format(pressure)}kPa")
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.pressure),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
+        Text(stringResource(com.ramzan.atmostate.R.string.kpa, "%.1f".format(pressure)))
     }
 }
 
@@ -203,20 +209,26 @@ fun Humidity(humidity: Int) {
             painter = painterResource(AtmostateR.drawable.humidity),
             contentDescription = null
         )
-        Text(text = "Humidity", style = TextStyle(fontWeight = FontWeight.Light))
-        Text("${humidity}%")
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.humidity),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
+        Text(stringResource(com.ramzan.atmostate.R.string.int_percent, humidity))
     }
 }
 
 @Composable
-fun DewPoint(dewPoint: String) {
+fun DewPoint(dewPoint: Int) {
     GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.dewpoint),
-            contentDescription = "Dew point"
+            contentDescription = null
         )
-        Text(text = "Dew point", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(dewPoint)
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.dew_point),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
+        Text(stringResource(com.ramzan.atmostate.R.string.degrees_unit, dewPoint))
     }
 }
 
@@ -225,9 +237,12 @@ fun Sunrise(sunrise: ZonedDateTime) {
     GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.sunrise),
-            contentDescription = "Sunrise"
+            contentDescription = null
         )
-        Text(text = "Sunrise", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.sunrise),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
         Text(text = TimeFormatter.toDayHour(sunrise))
     }
 }
@@ -237,9 +252,12 @@ fun Sunset(sunset: ZonedDateTime) {
     GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.sunset),
-            contentDescription = "Sunset"
+            contentDescription = null
         )
-        Text(text = "Sunset", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.sunset),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
         Text(text = TimeFormatter.toDayHour(sunset))
     }
 }

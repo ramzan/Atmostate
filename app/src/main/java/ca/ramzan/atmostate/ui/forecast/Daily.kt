@@ -65,17 +65,22 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                                     horizontalArrangement = Arrangement.SpaceBetween,
                                 ) {
                                     Image(
-                                        painter = rememberImagePainter("https://openweathermap.org/img/wn/${icon}@4x.png"),
-                                        contentDescription = "Forecast image",
+                                        painter = rememberImagePainter(
+                                            stringResource(
+                                                R.string.icon_url,
+                                                icon
+                                            )
+                                        ),
+                                        contentDescription = null,
                                         modifier = Modifier.size(48.dp)
                                     )
                                     Text(
-                                        text = "High: ${tempMax}°C",
+                                        text = stringResource(R.string.temp_max, tempMax),
                                         fontSize = 18.sp,
                                         modifier = Modifier.padding(end = 16.dp)
                                     )
                                     Text(
-                                        text = "Low: ${tempMin}°C",
+                                        text = stringResource(R.string.temp_min, tempMin),
                                         fontSize = 18.sp
                                     )
                                 }
@@ -90,11 +95,11 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                                 ) {
                                     Image(
                                         painter = painterResource(R.drawable.rain_cloud),
-                                        contentDescription = "Probability of precipitation",
+                                        contentDescription = stringResource(R.string.probability_of_precipitation),
                                         modifier = Modifier.padding(end = 8.dp)
                                     )
                                     Text(
-                                        "${pop}%",
+                                        stringResource(R.string.int_percent, pop),
                                         Modifier.wrapContentWidth(Alignment.End)
                                     )
                                 }
@@ -115,21 +120,28 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                                 ) {
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                         Text(
-                                            text = "$windSpeed km/h ${
+                                            text = stringResource(
+                                                R.string.wind_speed,
+                                                windSpeed,
                                                 degreeToDirection(windDeg)
-                                            }"
+                                            )
                                         )
-                                        Text(text = "Wind")
+                                        Text(text = stringResource(R.string.wind))
                                     }
 
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(text = "$windGust km/h")
-                                        Text(text = "Wind Gust")
+                                        Text(
+                                            text = stringResource(
+                                                R.string.wind_speed_gust,
+                                                windGust
+                                            )
+                                        )
+                                        Text(text = stringResource(R.string.wind_gust))
                                     }
 
                                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                        Text(text = "${humidity}%")
-                                        Text(text = "Humidity")
+                                        Text(text = stringResource(R.string.int_percent, humidity))
+                                        Text(text = stringResource(R.string.humidity))
                                     }
                                 }
                                 Row(
@@ -139,10 +151,10 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                                         .padding(top = 16.dp)
                                 ) {
                                     Column(modifier = Modifier.padding(end = 16.dp)) {
-                                        Text("Morning")
-                                        Text("Day")
-                                        Text("Evening")
-                                        Text("Night")
+                                        Text(stringResource(R.string.morning))
+                                        Text(stringResource(R.string.day))
+                                        Text(stringResource(R.string.evening))
+                                        Text(stringResource(R.string.night))
                                     }
                                     Column {
                                         DailyTemp(tempMorn, feelsLikeMorn)
@@ -162,5 +174,5 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
 
 @Composable
 fun DailyTemp(temp: Int, feelsLike: Int?) {
-    Text("${temp}°C feels like ${feelsLike ?: temp}")
+    Text(stringResource(R.string.temp_and_feels_like, temp, feelsLike ?: temp))
 }

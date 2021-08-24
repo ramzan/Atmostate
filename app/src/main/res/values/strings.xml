@@ -15,7 +15,8 @@
     <string name="wind_gust">Wind Gust</string>
     <string name="wind_speed">%d km/h %s</string>
     <string name="wind_speed_gust">%d km/h</string>
-    <string name="temperate">%d°C</string>
+    <string name="degrees_unit">%d°C</string>
+    <string name="degrees_no_unit">%d°</string>
     <string name="feels_like">Feels like %d</string>
     <string name="uv_index">UV Index: %d</string>
     <string name="icon_url">https://openweathermap.org/img/wn/%s@4x.png</string>
@@ -24,4 +25,45 @@
     <string name="no_data_message_hourly">Sorry, the hourly forecast is unavailable at this time. Please try again later.</string>
     <string name="location_unavailable_message">Location is unavailable. Please ensure that location is enabled in your device settings.</string>
     <string name="network_error_message">A network error occurred. Please try again later.</string>
+    <string name="probability_of_precipitation">Probability of precipitation</string>
+    <string name="int_percent">%d%%</string>
+    <string name="dew_point">Dew point</string>
+    <string name="humidity">Humidity</string>
+    <string name="sunrise">Sunrise</string>
+    <string name="sunset">Sunset</string>
+    <string name="pressure">Pressure</string>
+    <string name="visibility">Visibility</string>
+    <string name="kilometers">%dkm</string>
+    <string name="kpa">%skPa</string>
+    <string name="temp_max">High: %d°C</string>
+    <string name="temp_min">Low: %d°C</string>
+    <string name="morning">Morning</string>
+    <string name="day">Day</string>
+    <string name="evening">Evening</string>
+    <string name="night">Night</string>
+    <string name="temp_and_feels_like">%d°C feels like %d</string>
+    <string name="location_permission_request">Would you like to automatically see weather for your location? This requires access to your location.</string>
+    <string name="yes">Yes</string>
+    <string name="no_thanks">No thanks</string>
+    <string name="manual_location_prompt">Or find your location manually</string>
+    <string name="search">Search</string>
+    <string name="location_permission_denied">Location permission denied. To use this feature, please grant location access on the Settings screen.</string>
+    <string name="open_settings_prompt">Open Settings</string>
+    <string name="source_code_url">https://github.com/ramzan/Atmostate</string>
+    <string name="location_removed_message">Location removed</string>
+    <string name="your_location">Your location</string>
+    <string name="add_location">+ Add location</string>
+    <string name="locations_menu">Locations menu</string>
+    <string name="more_options_menu">More options</string>
+    <string name="remove_location">Remove location</string>
+    <string name="source_code">Source code</string>
+    <string name="time_updated">Updated %s</string>
+    <string name="rain">Rain</string>
+    <string name="snow">Snow</string>
+    <string name="millimeters">%smm</string>
+    <string-array name="tab_titles">
+        <item>Current</item>
+        <item>Hourly</item>
+        <item>Daily</item>
+    </string-array>
 </resources>

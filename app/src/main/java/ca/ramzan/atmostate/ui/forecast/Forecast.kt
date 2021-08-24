@@ -24,6 +24,8 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringArrayResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
@@ -46,13 +48,11 @@ import com.google.accompanist.permissions.PermissionState
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import com.ramzan.atmostate.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-
-val tabTitles = listOf("Current", "Hourly", "Daily")
-
 
 val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "settings")
 val HIDE_LOCATION_RATIONALE = booleanPreferencesKey("hide_rationale")
@@ -101,7 +101,7 @@ fun Forecast(
                 {
                     scope.launch {
                         vm.removeCurrentCity()
-                        scaffoldState.snackbarHostState.showSnackbar("Location removed")
+                        scaffoldState.snackbarHostState.showSnackbar(context.getString(R.string.location_removed_message))
                     }
                 },
                 { showSourceCode(context) }
@@ -114,7 +114,10 @@ fun Forecast(
                     .background(MaterialTheme.colors.background)
             ) {
                 item {
-                    DrawerItem(text = "Your location", selected = currentCityName.value.isEmpty()) {
+                    DrawerItem(
+                        text = stringResource(R.string.your_location),
+                        selected = currentCityName.value.isEmpty()
+                    ) {
                         vm.setCurrentCity(USER_LOCATION_CITY_ID)
                         scope.launch { scaffoldState.drawerState.close() }
                     }
@@ -126,7 +129,7 @@ fun Forecast(
                     }
                 }
                 item {
-                    DrawerItem(text = "+ Add location", selected = false) {
+                    DrawerItem(text = stringResource(R.string.add_location), selected = false) {
                         navController.navigate(MainDestinations.CITY_SELECT_ROUTE)
                     }
                 }
@@ -149,7 +152,7 @@ fun Forecast(
                         hideRationale.value
                     )
                 } else if (refreshState.value == RefreshState.Loading && currentForecast.value == null) {
-                    LazyColumn(content = {}, modifier = Modifier.fillMaxSize())
+                    EmptyLoadingPage()
                 } else {
                     HorizontalPager(state = pagerState) { page ->
                         when (page) {
@@ -191,6 +194,11 @@ fun showErrorMessage(
     return shown
 }
 
+@Composable
+fun EmptyLoadingPage() {
+    LazyColumn(content = {}, modifier = Modifier.fillMaxSize())
+}
+
 @ExperimentalPagerApi
 @Composable
 fun ForecastAppBar(
@@ -202,17 +210,25 @@ fun ForecastAppBar(
 ) {
     val (showMenu, setShowMenu) = rememberSaveable { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+
+    val tabTitles = stringArrayResource(R.array.tab_titles)
     Column {
         TopAppBar(
-            title = { Text(if (currentCityName.isEmpty()) "Your location" else currentCityName) },
+            title = { Text(if (currentCityName.isEmpty()) stringResource(R.string.your_location) else currentCityName) },
             navigationIcon = {
                 IconButton(onClick = { openDrawer() }) {
-                    Icon(Icons.Filled.Menu, contentDescription = "Menu")
+                    Icon(
+                        Icons.Filled.Menu,
+                        contentDescription = stringResource(R.string.locations_menu)
+                    )
                 }
             },
             actions = {
                 IconButton(onClick = { setShowMenu(true) }) {
-                    Icon(Icons.Filled.MoreVert, contentDescription = "Menu")
+                    Icon(
+                        Icons.Filled.MoreVert,
+                        contentDescription = stringResource(R.string.more_options_menu)
+                    )
                 }
                 DropdownMenu(
                     expanded = showMenu,
@@ -223,14 +239,14 @@ fun ForecastAppBar(
                             removeLocation()
                             setShowMenu(false)
                         }) {
-                            Text("Remove location")
+                            Text(stringResource(R.string.remove_location))
                         }
                     }
                     DropdownMenuItem(onClick = {
                         showSource()
                         setShowMenu(false)
                     }) {
-                        Text("Source code")
+                        Text(stringResource(R.string.source_code))
                     }
                 }
             }
@@ -275,7 +291,7 @@ private fun LocationRequestScreen(
     when {
         permissionState.hasPermission -> {
             onPermissionGranted()
-            Text("Location permission Granted")
+            EmptyLoadingPage()
         }
         permissionState.shouldShowRationale || !permissionState.permissionRequested -> {
             if (doNotShowRationale) {
@@ -311,24 +327,24 @@ fun AskPermission(
             .padding(16.dp)
     ) {
         Text(
-            "Would you like to automatically see weather for your location? This requires access to your location.",
+            stringResource(R.string.location_permission_request),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Row {
             Button(onClick = { permissionState.launchPermissionRequest() }) {
-                Text("Yes")
+                Text(stringResource(R.string.yes))
             }
             Spacer(Modifier.width(8.dp))
             Button(onClick = setDoNotShowRationale) {
-                Text("No thanks", textAlign = TextAlign.Center)
+                Text(stringResource(R.string.no_thanks), textAlign = TextAlign.Center)
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Or find your location manually")
+        Text(stringResource(R.string.manual_location_prompt))
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = navigateToSearchScreen) {
-            Text("Search")
+            Text(stringResource(R.string.search))
         }
     }
 }
@@ -343,18 +359,18 @@ fun PermissionDenied(navigateToSettingsScreen: () -> Unit, navigateToSearchScree
             .padding(16.dp)
     ) {
         Text(
-            "Location permission denied. To use this feature, please grant location access on the Settings screen.",
+            stringResource(R.string.location_permission_denied),
             textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = navigateToSettingsScreen) {
-            Text("Open Settings")
+            Text(stringResource(R.string.open_settings_prompt))
         }
         Spacer(modifier = Modifier.height(8.dp))
-        Text("Or find your location manually")
+        Text(stringResource(R.string.manual_location_prompt))
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = navigateToSearchScreen) {
-            Text("Search")
+            Text(stringResource(R.string.search))
         }
     }
 }
@@ -381,7 +397,7 @@ fun setLocationRationaleHidden(scope: CoroutineScope, context: Context) {
 fun showSourceCode(context: Context) {
     startActivity(
         context,
-        Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/ramzan/Atmostate")),
+        Intent(Intent.ACTION_VIEW, Uri.parse(context.getString(R.string.source_code_url))),
         null
     )
 }

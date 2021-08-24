@@ -12,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.ramzan.atmostate.R
@@ -25,7 +26,10 @@ fun degreeToDirection(deg: Int): String {
 
 @Composable
 fun TimeUpdated(time: ZonedDateTime) {
-    Text(text = "Updated ${TimeFormatter.toDate(time)}", style = MaterialTheme.typography.body2)
+    Text(
+        text = stringResource(R.string.time_updated, TimeFormatter.toDate(time)),
+        style = MaterialTheme.typography.body2
+    )
 }
 
 @Composable
@@ -36,10 +40,10 @@ fun Rain(rain: Double) {
     ) {
         Image(
             painter = painterResource(R.drawable.rain_drop),
-            contentDescription = "Rain",
+            contentDescription = stringResource(R.string.rain),
             modifier = Modifier.padding(end = 8.dp)
         )
-        Text(text = "${"%.1f".format(rain)}mm")
+        Text(text = stringResource(R.string.millimeters, "%.1f".format(rain)))
     }
 }
 
@@ -51,10 +55,10 @@ fun Snow(snow: Double) {
     ) {
         Image(
             painter = painterResource(R.drawable.snow_flake),
-            contentDescription = "Rain",
+            contentDescription = stringResource(R.string.snow),
             modifier = Modifier.padding(end = 8.dp)
         )
-        Text(text = "${"%.1f".format(snow)}mm")
+        Text(text = stringResource(R.string.millimeters, "%.1f".format(snow)))
     }
 }
 

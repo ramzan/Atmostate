@@ -73,12 +73,15 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                                                 icon
                                             )
                                         ),
-                                        contentDescription = "Forecast image",
+                                        contentDescription = null,
                                         modifier = Modifier.size(48.dp)
                                     )
-                                    Text("${temp}°", fontSize = 32.sp)
+                                    Text(
+                                        stringResource(R.string.degrees_no_unit, temp),
+                                        fontSize = 32.sp
+                                    )
                                 }
-                                Text("Feels like $feelsLike")
+                                Text(stringResource(R.string.feels_like, feelsLike))
                             }
 
                             Column(
@@ -91,11 +94,11 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                                 ) {
                                     Image(
                                         painter = painterResource(R.drawable.rain_cloud),
-                                        contentDescription = "Probability of precipitation",
+                                        contentDescription = stringResource(R.string.probability_of_precipitation),
                                         modifier = Modifier.padding(end = 8.dp)
                                     )
                                     Text(
-                                        "${pop}%",
+                                        stringResource(R.string.int_percent, pop),
                                         Modifier.wrapContentWidth(Alignment.End)
                                     )
                                 }
