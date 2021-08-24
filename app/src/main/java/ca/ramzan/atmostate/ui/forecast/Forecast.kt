@@ -21,8 +21,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat.startActivity
 import androidx.datastore.core.DataStore
@@ -131,25 +133,25 @@ fun Forecast(
             }
         },
         content = {
-            HorizontalPager(state = pagerState) { page ->
-                SwipeRefresh(
-                    state = rememberSwipeRefreshState(refreshState.value == RefreshState.Loading),
-                    onRefresh = {
-                        setErrorShown(false)
-                        vm.refresh()
-                    }
-                ) {
-                    if (currentCityName.value.isEmpty() && refreshState.value == RefreshState.PermissionError) {
-                        LocationRequestScreen(
-                            { navController.navigate(MainDestinations.CITY_SELECT_ROUTE) },
-                            { showAppSettingsPage(context) },
-                            { setLocationRationaleHidden(scope, context) },
-                            vm::onPermissionGranted,
-                            hideRationale.value
-                        )
-                    } else if (refreshState.value == RefreshState.Loading && currentForecast.value == null) {
-                        LazyColumn(content = {}, modifier = Modifier.fillMaxSize())
-                    } else {
+            SwipeRefresh(
+                state = rememberSwipeRefreshState(refreshState.value == RefreshState.Loading),
+                onRefresh = {
+                    setErrorShown(false)
+                    vm.refresh()
+                }
+            ) {
+                if (currentCityName.value.isEmpty() && refreshState.value == RefreshState.PermissionError) {
+                    LocationRequestScreen(
+                        { navController.navigate(MainDestinations.CITY_SELECT_ROUTE) },
+                        { showAppSettingsPage(context) },
+                        { setLocationRationaleHidden(scope, context) },
+                        vm::onPermissionGranted,
+                        hideRationale.value
+                    )
+                } else if (refreshState.value == RefreshState.Loading && currentForecast.value == null) {
+                    LazyColumn(content = {}, modifier = Modifier.fillMaxSize())
+                } else {
+                    HorizontalPager(state = pagerState) { page ->
                         when (page) {
                             0 -> CurrentForecast(
                                 currentListState,
@@ -299,8 +301,17 @@ fun AskPermission(
     setDoNotShowRationale: () -> Unit,
     navigateToSearchScreen: () -> Unit
 ) {
-    Column {
-        Text("Would you like to automatically see weather for your location? This requires access to your location.")
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(16.dp)
+    ) {
+        Text(
+            "Would you like to automatically see weather for your location? This requires access to your location.",
+            textAlign = TextAlign.Center
+        )
         Spacer(modifier = Modifier.height(8.dp))
         Row {
             Button(onClick = { permissionState.launchPermissionRequest() }) {
@@ -308,11 +319,12 @@ fun AskPermission(
             }
             Spacer(Modifier.width(8.dp))
             Button(onClick = setDoNotShowRationale) {
-                Text("No thanks")
+                Text("No thanks", textAlign = TextAlign.Center)
             }
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text("Or find your location manually")
+        Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = navigateToSearchScreen) {
             Text("Search")
         }
@@ -321,9 +333,16 @@ fun AskPermission(
 
 @Composable
 fun PermissionDenied(navigateToSettingsScreen: () -> Unit, navigateToSearchScreen: () -> Unit) {
-    Column {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier
+            .fillMaxHeight()
+            .padding(16.dp)
+    ) {
         Text(
-            "Location permission denied. To use this feature, please grant location access on the Settings screen."
+            "Location permission denied. To use this feature, please grant location access on the Settings screen.",
+            textAlign = TextAlign.Center
         )
         Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = navigateToSettingsScreen) {
@@ -331,6 +350,7 @@ fun PermissionDenied(navigateToSettingsScreen: () -> Unit, navigateToSearchScree
         }
         Spacer(modifier = Modifier.height(8.dp))
         Text("Or find your location manually")
+        Spacer(modifier = Modifier.height(8.dp))
         Button(onClick = navigateToSearchScreen) {
             Text("Search")
         }
