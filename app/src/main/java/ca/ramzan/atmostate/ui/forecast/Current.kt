@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -28,7 +29,7 @@ private val gridPadding = 24.dp
 @Composable
 fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Alert>) {
     if (current == null) {
-        NoDataMessage(message = "Sorry, the current conditions are unavailable at this time. Please try again later.")
+        NoDataMessage(message = stringResource(com.ramzan.atmostate.R.string.no_data_message_current))
         return
     }
 
@@ -64,12 +65,12 @@ fun CurrentForecast(listState: LazyListState, current: Current?, alerts: List<Al
                         Cloudiness(clouds)
                     }
                     GridColumn {
-                        Humidity("${humidity}%")
+                        Humidity(humidity)
                         Sunrise(sunrise)
 
                     }
                     GridColumn {
-                        Pressure("${"%.1f".format(pressure)}kPa")
+                        Pressure(pressure)
                         Sunset(sunset)
 
                     }
@@ -97,15 +98,23 @@ fun Weather(description: String, icon: String, temp: Int, feelsLike: Int, uvi: I
         horizontalArrangement = Arrangement.Center
     ) {
         Image(
-            painter = rememberImagePainter("https://openweathermap.org/img/wn/${icon}@4x.png"),
-            contentDescription = "Forecast image",
+            painter = rememberImagePainter(
+                stringResource(
+                    com.ramzan.atmostate.R.string.icon_url,
+                    icon
+                )
+            ),
+            contentDescription = null,
             modifier = Modifier.size(128.dp)
         )
         Column {
-            Text(text = "$temp°C", style = MaterialTheme.typography.h3)
-            Text(text = "Feels like $feelsLike")
+            Text(
+                text = stringResource(com.ramzan.atmostate.R.string.temperate, temp),
+                style = MaterialTheme.typography.h3
+            )
+            Text(text = stringResource(com.ramzan.atmostate.R.string.feels_like, feelsLike))
             Text(description)
-            Text("UV Index: $uvi")
+            Text(stringResource(com.ramzan.atmostate.R.string.uv_index, uvi))
         }
     }
 }
@@ -137,11 +146,14 @@ fun Wind(speed: Int, gust: Int, direction: String) {
     GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.wind),
-            contentDescription = "Wind"
+            contentDescription = null
         )
-        Text(text = "Wind", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(text = "${speed}km/h $direction")
-        Text(text = "${gust}km/h")
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.wind),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
+        Text(text = stringResource(com.ramzan.atmostate.R.string.wind_speed, speed, direction))
+        Text(text = stringResource(com.ramzan.atmostate.R.string.wind_speed_gust, gust))
     }
 }
 
@@ -150,9 +162,12 @@ fun Cloudiness(clouds: Int) {
     GridItem {
         Image(
             painter = painterResource(AtmostateR.drawable.cloud),
-            contentDescription = "Cloud"
+            contentDescription = null
         )
-        Text(text = "Cloudiness", style = TextStyle(fontWeight = FontWeight.Light))
+        Text(
+            text = stringResource(com.ramzan.atmostate.R.string.cloudiness),
+            style = TextStyle(fontWeight = FontWeight.Light)
+        )
         Text(text = "$clouds%")
     }
 }
@@ -162,7 +177,7 @@ fun Visibility(visibility: Int) {
     GridItem(padded = true) {
         Image(
             painter = painterResource(AtmostateR.drawable.telescope),
-            contentDescription = "Telescope"
+            contentDescription = null
         )
         Text(text = "Visibility", style = TextStyle(fontWeight = FontWeight.Light))
         Text(text = "${visibility}km")
@@ -170,26 +185,26 @@ fun Visibility(visibility: Int) {
 }
 
 @Composable
-fun Pressure(pressure: String) {
+fun Pressure(pressure: Double) {
     GridItem(padded = true) {
         Image(
             painter = painterResource(AtmostateR.drawable.barometer),
-            contentDescription = "Barometer"
+            contentDescription = null
         )
         Text(text = "Pressure", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(pressure)
+        Text("${"%.1f".format(pressure)}kPa")
     }
 }
 
 @Composable
-fun Humidity(humidity: String) {
+fun Humidity(humidity: Int) {
     GridItem(padded = true) {
         Image(
             painter = painterResource(AtmostateR.drawable.humidity),
-            contentDescription = "Humidity"
+            contentDescription = null
         )
         Text(text = "Humidity", style = TextStyle(fontWeight = FontWeight.Light))
-        Text(humidity)
+        Text("${humidity}%")
     }
 }
 
@@ -239,10 +254,23 @@ fun Alert(alert: Alert) {
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(text = alert.event, style = MaterialTheme.typography.subtitle2)
-        Text(text = "Start: ${TimeFormatter.toDate(alert.start)}", style = caption)
-        Text(text = "End: ${TimeFormatter.toDate(alert.end)}", style = caption)
+        Text(
+            text = stringResource(
+                com.ramzan.atmostate.R.string.alert_start_time,
+                TimeFormatter.toDate(alert.start)
+            ), style = caption
+        )
+        Text(
+            text = stringResource(
+                com.ramzan.atmostate.R.string.alert_end_time,
+                TimeFormatter.toDate(alert.end)
+            ), style = caption
+        )
         Row {
-            Text(text = "Issued by: ", style = caption)
+            Text(
+                text = stringResource(com.ramzan.atmostate.R.string.alert_issued_by),
+                style = caption
+            )
             Text(text = alert.senderName, fontWeight = FontWeight.SemiBold, style = caption)
         }
         Divider(

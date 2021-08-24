@@ -167,19 +167,21 @@ fun Forecast(
         }
     )
     if (!errorShown) {
-        setErrorShown(showErrorMessage(refreshState.value, scope, scaffoldState))
+        setErrorShown(showErrorMessage(refreshState.value, scope, scaffoldState, context))
     }
 }
 
 fun showErrorMessage(
     refreshState: RefreshState,
     scope: CoroutineScope,
-    scaffoldState: ScaffoldState
+    scaffoldState: ScaffoldState,
+    context: Context
 ): Boolean {
     var shown = false
-    (refreshState as? RefreshState.Error)?.run {
+    (refreshState as? RefreshState.Error)?.let { error ->
         scaffoldState.snackbarHostState.run {
             // Prevent duplicate snackbars when loading multiple cities
+            val message = context.getString(error.message)
             if (currentSnackbarData?.message != message) {
                 scope.launch { showSnackbar(message) }
                 shown = true

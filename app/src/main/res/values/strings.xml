@@ -1,3 +1,27 @@
 <resources>
     <string name="app_name">Atmostate</string>
+    <string name="country_selector_label">Country</string>
+    <string name="country_selector_icon_label">Choose country</string>
+    <string name="city_saved_icon_label">City saved</string>
+    <string name="city_select_app_bar_title">Select location</string>
+    <string name="back_button_label">Go back</string>
+    <string name="clear_city_search_icon_label">Clear search query</string>
+    <string name="city_search_placeholder">Search for a location</string>
+    <string name="alert_start_time">Start: %s</string>
+    <string name="alert_end_time">End: %s</string>
+    <string name="alert_issued_by">Issued by: </string>
+    <string name="cloudiness">Cloudiness</string>
+    <string name="wind">Wind</string>
+    <string name="wind_gust">Wind Gust</string>
+    <string name="wind_speed">%d km/h %s</string>
+    <string name="wind_speed_gust">%d km/h</string>
+    <string name="temperate">%d°C</string>
+    <string name="feels_like">Feels like %d</string>
+    <string name="uv_index">UV Index: %d</string>
+    <string name="icon_url">https://openweathermap.org/img/wn/%s@4x.png</string>
+    <string name="no_data_message_current">Sorry, the current conditions are unavailable at this time. Please try again later.</string>
+    <string name="no_data_message_daily">Sorry, the daily forecast is unavailable at this time. Please try again later.</string>
+    <string name="no_data_message_hourly">Sorry, the hourly forecast is unavailable at this time. Please try again later.</string>
+    <string name="location_unavailable_message">Location is unavailable. Please ensure that location is enabled in your device settings.</string>
+    <string name="network_error_message">A network error occurred. Please try again later.</string>
 </resources>

@@ -17,6 +17,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ca.ramzan.atmostate.domain.Hourly
@@ -30,7 +31,7 @@ import com.ramzan.atmostate.R
 @Composable
 fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
     if (hourly.isEmpty()) {
-        NoDataMessage(message = "Sorry, the hourly forecast is unavailable at this time. Please try again later.")
+        NoDataMessage(message = stringResource(R.string.no_data_message_hourly))
         return
     }
     LazyColumn(
@@ -66,7 +67,12 @@ fun HourlyForecast(listState: LazyListState, hourly: List<Hourly>) {
                             Column {
                                 Row(verticalAlignment = Alignment.Bottom) {
                                     Image(
-                                        painter = rememberImagePainter("https://openweathermap.org/img/wn/${icon}@4x.png"),
+                                        painter = rememberImagePainter(
+                                            stringResource(
+                                                R.string.icon_url,
+                                                icon
+                                            )
+                                        ),
                                         contentDescription = "Forecast image",
                                         modifier = Modifier.size(48.dp)
                                     )
@@ -124,13 +130,13 @@ fun ExpandedHour(forecast: String, windSpeed: Int, windGust: Int, windDirection:
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "$windSpeed km/h $windDirection")
-                Text(text = "Wind")
+                Text(text = stringResource(R.string.wind_speed, windSpeed, windDirection))
+                Text(text = stringResource(R.string.wind))
             }
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(text = "$windGust km/h")
-                Text(text = "Wind Gust")
+                Text(text = stringResource(R.string.wind_speed_gust, windGust))
+                Text(text = stringResource(R.string.wind_gust))
             }
         }
     }

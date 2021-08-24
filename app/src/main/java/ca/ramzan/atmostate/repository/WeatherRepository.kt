@@ -1,6 +1,7 @@
 package ca.ramzan.atmostate.repository
 
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
@@ -11,6 +12,7 @@ import ca.ramzan.atmostate.database.cities.asDomainModel
 import ca.ramzan.atmostate.database.weather.*
 import ca.ramzan.atmostate.network.*
 import ca.ramzan.atmostate.ui.LocationManager
+import com.ramzan.atmostate.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
@@ -21,7 +23,7 @@ sealed class RefreshState {
     object Loading : RefreshState()
     object Loaded : RefreshState()
     object PermissionError : RefreshState()
-    data class Error(val message: String) : RefreshState()
+    data class Error(@StringRes val message: Int) : RefreshState()
 }
 
 const val USER_LOCATION_CITY_ID = 0L
@@ -88,7 +90,7 @@ class WeatherRepository(
                 }
                 lm.getLocation() ?: run {
                     Log.d("getWeather", "Skip refresh $cityId: user location unavailable")
-                    _refreshState.emit(RefreshState.Error("Location is unavailable. Please ensure that location is enabled in your device settings."))
+                    _refreshState.emit(RefreshState.Error(R.string.location_unavailable_message))
                     return@launch
                 }
             } else {
@@ -106,7 +108,7 @@ class WeatherRepository(
                 when (this) {
                     is WeatherResult.Failure -> {
                         Log.e("getWeather", "Fail $cityId: $error")
-                        _refreshState.emit(RefreshState.Error("A network error occurred. Please try again later."))
+                        _refreshState.emit(RefreshState.Error(R.string.network_error_message))
                     }
                     is WeatherResult.Success -> {
                         Log.d("getWeather", "Success $cityId")

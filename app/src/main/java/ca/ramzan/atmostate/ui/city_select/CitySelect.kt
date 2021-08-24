@@ -23,9 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ca.ramzan.atmostate.domain.Country
+import com.ramzan.atmostate.R
 
 @ExperimentalFoundationApi
 @Composable
@@ -67,11 +69,11 @@ fun CitySelect(
                             value = countries.value[selectedIndex.value].name,
                             readOnly = true,
                             onValueChange = {},
-                            label = { Text("Country") },
+                            label = { Text(stringResource(R.string.country_selector_label)) },
                             trailingIcon = {
                                 Icon(
                                     Icons.Filled.ArrowDropDown,
-                                    contentDescription = "Choose country",
+                                    contentDescription = stringResource(R.string.country_selector_icon_label),
                                     modifier = Modifier
                                         .clickable(onClick = { setExpanded(true) })
                                 )
@@ -110,7 +112,7 @@ fun CitySelect(
                         if (city.saved) {
                             Icon(
                                 Icons.Filled.CheckCircle,
-                                contentDescription = "City saved",
+                                contentDescription = stringResource(R.string.city_saved_icon_label),
                             )
                         }
                     }
@@ -125,11 +127,11 @@ fun CitySelectAppBar(onBackPress: () -> Boolean) {
     Column {
         TopAppBar(
             title = {
-                Text("Select location")
+                Text(stringResource(R.string.city_select_app_bar_title))
             },
             navigationIcon = {
                 IconButton(onClick = { onBackPress() }) {
-                    Icon(Icons.Filled.ArrowBack, contentDescription = "Go back")
+                    Icon(Icons.Filled.ArrowBack, contentDescription = stringResource(R.string.back_button_label))
                 }
             }
         )
@@ -146,13 +148,13 @@ fun SearchBox(query: String, setQuery: (String) -> Unit) {
             if (query.isNotEmpty()) {
                 Icon(
                     Icons.Filled.Clear,
-                    contentDescription = "Clear search query",
+                    contentDescription = stringResource(R.string.clear_city_search_icon_label),
                     modifier = Modifier.clickable { setQuery("") }
                 )
             }
         },
         placeholder = {
-            Text(text = "Search for a location")
+            Text(text = stringResource(R.string.city_search_placeholder))
         },
         modifier = Modifier
             .fillMaxWidth()
