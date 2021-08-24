@@ -19,7 +19,7 @@ object TimeFormatter {
     fun isMidnight(time: ZonedDateTime): Boolean = hourOfDayFormatter.format(time).equals("0")
 
     fun timeToAlpha(time: ZonedDateTime): Float {
-        return abs(12 - hourOfDayFormatter.format(time).toFloat()) / 12 * 0.5f
+        return abs(12 - hourOfDayFormatter.format(time).toFloat()) / 12
     }
 
     fun toWeekDay(time: ZonedDateTime): String = weekDayFormatter.format(time)

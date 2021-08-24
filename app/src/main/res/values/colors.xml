@@ -2,6 +2,7 @@
 <resources>
     <color name="orange_200">#FFE082</color>
     <color name="orange_700">#FFA000</color>
-    <color name="blue900">#FF1A237E</color>
+    <color name="light_blue_300">#4FC3F7</color>
+    <color name="indigo_900">#FF1A237E</color>
     <color name="icon_color">#000</color>
 </resources>

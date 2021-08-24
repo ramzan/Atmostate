@@ -201,7 +201,6 @@ fun ForecastAppBar(
     Column {
         TopAppBar(
             title = { Text(if (currentCityName.isEmpty()) "Your location" else currentCityName) },
-            backgroundColor = MaterialTheme.colors.primary,
             navigationIcon = {
                 IconButton(onClick = { openDrawer() }) {
                     Icon(Icons.Filled.Menu, contentDescription = "Menu")

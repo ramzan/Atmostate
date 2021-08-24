@@ -1,6 +1,7 @@
 package ca.ramzan.atmostate.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.Colors
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
@@ -8,32 +9,36 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 private val DarkColorPalette = darkColors(
-    primary = Indigo700,
-    primaryVariant = Indigo900,
-    secondary = LightBlue300,
+    primary = Indigo800,
+    primaryVariant = Indigo500,
+    secondary = Indigo700,
     error = Red300,
-    background = Indigo500,
-    surface = Indigo500,
+    background = Indigo900,
+    surface = Indigo700,
     onPrimary = Color.White,
+    onSurface = Color.White,
+    onBackground = Color.White,
+    onSecondary = Color.White
 )
 
 private val LightColorPalette = lightColors(
-    primary = Orange500,
-    primaryVariant = Orange700,
-    secondary = Lime200,
+    primary = LightBlue200,
+    primaryVariant = LightBlue300,
+    secondary = LightBlue200,
     error = Red200,
-    background = Orange100,
-    surface = Orange100,
-
-    /* Other default colors to override
-background = Color.White,
-surface = Color.White,
-onPrimary = Color.White,
-onSecondary = Color.Black,
-onBackground = Color.Black,
-onSurface = Color.Black,
-*/
+    background = LightBlue50,
+    surface = LightBlue50,
+    onPrimary = Color.White,
+    onSurface = Color.Black,
+    onBackground = Color.Black,
+    onSecondary = Color.White
 )
+
+val Colors.hourlyBase: Color
+    @Composable get() = if (isLight) LightBlue50 else Indigo500
+val Colors.hourlyOverlay: Color
+    @Composable get() = if (isLight) LightBlue100 else Indigo900
+
 
 @Composable
 fun AtmostateTheme(darkTheme: Boolean = isSystemInDarkTheme(), content: @Composable () -> Unit) {

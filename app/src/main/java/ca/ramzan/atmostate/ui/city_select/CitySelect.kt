@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -57,7 +58,11 @@ fun CitySelect(
                     .fillMaxSize()
             ) {
                 stickyHeader {
-                    Column(Modifier.fillMaxWidth()) {
+                    Column(
+                        Modifier
+                            .fillMaxWidth()
+                            .background(MaterialTheme.colors.background)
+                    ) {
                         OutlinedTextField(
                             value = countries.value[selectedIndex.value].name,
                             readOnly = true,
@@ -151,7 +156,6 @@ fun SearchBox(query: String, setQuery: (String) -> Unit) {
         },
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.surface)
             .padding(horizontal = 16.dp)
             .focusRequester(requester)
     )
@@ -167,7 +171,9 @@ fun CountrySelector(
     setSelectedIndex: (Int) -> Unit,
     setExpanded: (Boolean) -> Unit
 ) {
+    val state = rememberLazyListState()
     LazyColumn(
+        state = state,
         modifier = Modifier.fillMaxSize()
     ) {
         itemsIndexed(items = countries) { i, country ->
@@ -176,8 +182,7 @@ fun CountrySelector(
                 color = MaterialTheme.colors.onSurface,
                 modifier = Modifier
                     .background(
-                        if (i == selectedIndex) MaterialTheme.colors.primary
-                        else MaterialTheme.colors.surface
+                        if (i == selectedIndex) MaterialTheme.colors.primaryVariant else MaterialTheme.colors.background
                     )
                     .clickable {
                         setSelectedIndex(i)
@@ -187,6 +192,9 @@ fun CountrySelector(
                     .fillMaxWidth()
             )
         }
+    }
+    LaunchedEffect(key1 = 'a') {
+        state.animateScrollToItem(selectedIndex)
     }
 }
 

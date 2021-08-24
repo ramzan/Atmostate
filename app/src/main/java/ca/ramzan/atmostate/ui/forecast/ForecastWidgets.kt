@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -77,11 +78,13 @@ fun NoDataMessage(message: String) {
 
 @Composable
 fun StickyListHeader(text: String) {
+    val bgColor = MaterialTheme.colors.secondary
     Text(
         text = text,
+        color = contentColorFor(backgroundColor = bgColor),
         modifier = Modifier
             .fillMaxWidth()
-            .background(MaterialTheme.colors.secondary, RectangleShape)
+            .background(bgColor, RectangleShape)
             .padding(horizontal = 16.dp, vertical = 4.dp),
         style = MaterialTheme.typography.subtitle1
     )
