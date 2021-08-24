@@ -21,12 +21,7 @@ class LocationManager @Inject constructor(
     private val locationCallback by lazy {
         object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
-                Log.d(TAG, "result: $locationResult")
-                locationResult ?: return
-                for (location in locationResult.locations) {
-                    Log.d(TAG, "Got new location: $location")
-//                    repo.setUserLocation(location.latitude, location.longitude)
-                }
+                Log.d(TAG, "onLocationResult: $locationResult")
             }
 
             override fun onLocationAvailability(la: LocationAvailability) {
