@@ -15,6 +15,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.ramzan.atmostate.R
 
 @Composable
@@ -75,6 +76,7 @@ fun StickyListHeader(text: String) {
             .fillMaxWidth()
             .background(bgColor, RectangleShape)
             .padding(horizontal = 16.dp, vertical = 4.dp),
-        style = MaterialTheme.typography.subtitle1
+        fontSize = 12.sp,
+        style = MaterialTheme.typography.overline
     )
 }
