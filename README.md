@@ -13,6 +13,10 @@
 </p> 
 <hr>
 
+## Features
+- offline caching
+- fetching data for current user location
+- follows Google's recommended MVVM architecure
 
 ## Screenshots
 <div align="center">
@@ -21,11 +25,6 @@
   <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/3.png" width=280>
   <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width=280>
 </div>
-
-
-### Features
-
-<!-- <b>Feature</b>: Description. -->
 
 ## License
 [![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](http://www.gnu.org/licenses/gpl-3.0.en.html)  
