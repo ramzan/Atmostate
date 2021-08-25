@@ -1,0 +1,6 @@
+This app receives  weather data from OpenWeatherMap. By using this app you agree to
+their privacy policy, which can be found at https://openweather.co.uk/privacy-policy.
+
+Atmostate does not collect any personal data for any purpose. If the user grants 
+location permission to the app, the users location is shared with OpenWeatherMap
+in order to retrieve the weather data requested by the user.
