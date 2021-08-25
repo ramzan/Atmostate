@@ -9,6 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import javax.inject.Inject
 
@@ -33,8 +34,8 @@ class CitySelectViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            CoroutineScope(Dispatchers.IO).launch {
-                _countries.emit(repo.getAllCountries())
+            withContext(Dispatchers.IO) {
+                _countries.value = repo.getAllCountries()
             }
         }
     }
