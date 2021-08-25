@@ -26,6 +26,13 @@
   <img src="fastlane/metadata/android/en-US/images/phoneScreenshots/4.png" width=280>
 </div>
 
+## Building
+Add the following line to local.properties:
+```
+OWM_API_KEY=XXX
+```
+where XXX is your OpenWeatherMap API key.
+
 ## License
 [![GNU GPLv3 Image](https://www.gnu.org/graphics/gplv3-127x51.png)](http://www.gnu.org/licenses/gpl-3.0.en.html)  
 
