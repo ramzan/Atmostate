@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.Atmostate" parent="Theme.MaterialComponents">
+        <item name="android:colorPrimary">@color/indigo_900</item>
         <item name="android:statusBarColor">@color/indigo_900</item>
         <item name="android:background">@color/indigo_900</item>
     </style>
