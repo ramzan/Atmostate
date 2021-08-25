@@ -5,10 +5,12 @@ import ca.ramzan.atmostate.database.weather.DbCurrent
 import ca.ramzan.atmostate.database.weather.DbDaily
 import ca.ramzan.atmostate.database.weather.DbHourly
 import com.squareup.moshi.Json
+import com.squareup.moshi.JsonClass
 import java.util.*
 import kotlin.math.roundToInt
 
 sealed class WeatherResult {
+    @JsonClass(generateAdapter = true)
     data class Success(
         val lat: Double,
         val lon: Double,
@@ -25,11 +27,12 @@ sealed class WeatherResult {
     ) : WeatherResult()
 }
 
-
+@JsonClass(generateAdapter = true)
 data class Precipitation(
     @Json(name = "1h") val hour: Double
 )
 
+@JsonClass(generateAdapter = true)
 data class Weather(
     val id: String,
     val main: String,
@@ -38,6 +41,7 @@ data class Weather(
 )
 
 // dt properties are Unix seconds
+@JsonClass(generateAdapter = true)
 data class NetworkCurrent(
     val dt: Long,
     val sunrise: Long?,
@@ -58,6 +62,7 @@ data class NetworkCurrent(
     val weather: List<Weather>
 )
 
+@JsonClass(generateAdapter = true)
 data class NetworkHourly(
     val dt: Long,
     val temp: Double,
@@ -77,6 +82,7 @@ data class NetworkHourly(
     val weather: List<Weather>
 )
 
+@JsonClass(generateAdapter = true)
 data class NetworkDaily(
     val dt: Long,
     val sunrise: Long?,
@@ -98,6 +104,7 @@ data class NetworkDaily(
     val snow: Double?,
     val weather: List<Weather>
 ) {
+    @JsonClass(generateAdapter = true)
     data class Temp(
         val morn: Double,
         val day: Double,
@@ -107,6 +114,7 @@ data class NetworkDaily(
         val max: Double,
     )
 
+    @JsonClass(generateAdapter = true)
     data class FeelsLike(
         val morn: Double,
         val day: Double,
@@ -115,6 +123,7 @@ data class NetworkDaily(
     )
 }
 
+@JsonClass(generateAdapter = true)
 data class NetworkAlert(
     @Json(name = "sender_name") val senderName: String,
     val event: String,
