@@ -26,7 +26,7 @@ private val LightColorPalette = lightColors(
     primaryVariant = LightBlue300,
     secondary = LightBlue200,
     error = Red200,
-    background = LightBlue50,
+    background = LightBlue100,
     surface = LightBlue50,
     onPrimary = Color.White,
     onSurface = Color.Black,
@@ -35,9 +35,9 @@ private val LightColorPalette = lightColors(
 )
 
 val Colors.hourlyBase: Color
-    @Composable get() = if (isLight) LightBlue50 else Indigo500
+    @Composable get() = if (isLight) LightBlue100 else Indigo500
 val Colors.hourlyOverlay: Color
-    @Composable get() = if (isLight) LightBlue100 else Indigo900
+    @Composable get() = if (isLight) LightBlue200 else Indigo900
 
 
 @Composable
