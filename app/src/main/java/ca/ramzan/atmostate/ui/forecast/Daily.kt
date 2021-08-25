@@ -76,12 +76,12 @@ fun DailyForecast(listState: LazyListState, daily: List<Daily>) {
                                     )
                                     Text(
                                         text = stringResource(R.string.temp_max, tempMax),
-                                        fontSize = 18.sp,
+                                        fontSize = 16.sp,
                                         modifier = Modifier.padding(end = 16.dp)
                                     )
                                     Text(
                                         text = stringResource(R.string.temp_min, tempMin),
-                                        fontSize = 18.sp
+                                        fontSize = 16.sp
                                     )
                                 }
                             }
