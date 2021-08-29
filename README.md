@@ -3,10 +3,9 @@
 <h4 align="center">A weather app written with Jetpack Compose using OpenWeatherMap</h4>
 <p align="center">
 <a href="https://play.google.com/store/apps/details?id=ca.ramzan.atmostate">
-  <!--<img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
+  <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
        alt="Get it on Google Play"
-       height="100">-->
-  Google Play version still in review
+       height="100">
 </a>
 </p> 
 <p align="center">
