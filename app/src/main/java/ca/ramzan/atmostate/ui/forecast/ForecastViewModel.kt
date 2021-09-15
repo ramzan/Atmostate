@@ -1,4 +1,4 @@
-package ca.ramzan.atmostate
+package ca.ramzan.atmostate.ui.forecast
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

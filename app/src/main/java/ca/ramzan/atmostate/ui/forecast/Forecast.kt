@@ -35,7 +35,6 @@ import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.preferencesDataStore
 import androidx.navigation.NavController
-import ca.ramzan.atmostate.ForecastViewModel
 import ca.ramzan.atmostate.repository.RefreshState
 import ca.ramzan.atmostate.repository.USER_LOCATION_CITY_ID
 import ca.ramzan.atmostate.ui.MainDestinations

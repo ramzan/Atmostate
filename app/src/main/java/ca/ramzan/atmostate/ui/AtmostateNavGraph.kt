@@ -11,7 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import ca.ramzan.atmostate.ForecastViewModel
+import ca.ramzan.atmostate.ui.forecast.ForecastViewModel
 import ca.ramzan.atmostate.ui.city_select.CitySelect
 import ca.ramzan.atmostate.ui.city_select.CitySelectViewModel
 import ca.ramzan.atmostate.ui.forecast.Forecast
