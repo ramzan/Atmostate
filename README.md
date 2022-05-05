@@ -3,13 +3,6 @@
 <h4 align="center">A weather app written with Jetpack Compose using OpenWeatherMap</h4>
 <div align="center"><a href="https://androidweekly.net/issues/issue-482"><img src="https://androidweekly.net/issues/issue-482/badge"></a></div>
 <p align="center">
-<a href="https://play.google.com/store/apps/details?id=ca.ramzan.atmostate">
-  <img src="https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png"
-       alt="Get it on Google Play"
-       height="100">
-</a>
-</p> 
-<p align="center">
 <a href="https://github.com/ramzan/atmostate/releases/" alt="GitHub release">Get the APK</a>
 </p> 
 <hr>
